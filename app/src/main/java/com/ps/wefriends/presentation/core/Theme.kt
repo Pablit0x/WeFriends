@@ -1,4 +1,4 @@
-package com.ps.wefriends.ui.theme
+package com.ps.wefriends.presentation.core
 
 import android.app.Activity
 import android.os.Build

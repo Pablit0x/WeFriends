@@ -1,4 +1,4 @@
-package com.ps.wefriends.ui.theme
+package com.ps.wefriends.presentation.core
 
 import androidx.compose.ui.graphics.Color
 
