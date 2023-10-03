@@ -12,20 +12,20 @@ fun NavGraph(startDestinationRoute: String, navController: NavHostController) {
     }
 }
 
-fun NavGraphBuilder.authenticationScreen(){
-    composable(route = Screen.Authentication.route){
+fun NavGraphBuilder.authenticationScreen() {
+    composable(route = Screen.Authentication.route) {
 
     }
 }
 
-fun NavGraphBuilder.onboardingScreen(){
-    composable(route = Screen.Onboarding.route){
+fun NavGraphBuilder.onboardingScreen() {
+    composable(route = Screen.Onboarding.route) {
 
     }
 }
 
-fun NavGraphBuilder.homeScreen(){
-    composable(route = Screen.Home.route){
+fun NavGraphBuilder.homeScreen() {
+    composable(route = Screen.Home.route) {
 
     }
 }
