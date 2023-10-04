@@ -13,9 +13,12 @@ hilt = "2.48"
 hilt-compose = "1.0.0"
 compose-navigation = "2.7.3"
 splash-screen = "1.0.1"
-firebase-auth-ktx = "22.1.2"
 google-services = "4.4.0"
 timber = "5.0.1"
+firebase-bom = "32.3.1"
+auth-one-tap = "1.0.3"
+compose-message-bar = "1.0.5"
+compose-flow = "2.7.0-alpha02"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -32,21 +35,25 @@ ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
-hilt-core = {group = "com.google.dagger", name = "hilt-android", version.ref = "hilt"}
-hilt-compiler = {group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt"}
-hilt-navigation = {group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-compose"}
-compose-navigation = {group = "androidx.navigation", name = "navigation-compose", version.ref = "compose-navigation"}
-splashScreen = {group = "androidx.core", name = "core-splashscreen", version.ref = "splash-screen"}
-compose-googleFonts = {group = "androidx.compose.ui", name = "ui-text-google-fonts"}
-compose-extendedIcons = {group = "androidx.compose.material", name = "material-icons-extended"}
-firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebase-auth-ktx" }
-timber = {group = "com.jakewharton.timber", name = "timber", version.ref = "timber"}
+hilt-core = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-compose" }
+compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "compose-navigation" }
+splashScreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splash-screen" }
+compose-googleFonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts" }
+compose-extendedIcons = { group = "androidx.compose.material", name = "material-icons-extended" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+auth-one-tap = { group = "com.github.stevdza-san", name = "OneTapCompose", version.ref = "auth-one-tap" }
+message-bar = { group = "com.github.stevdza-san", name = "MessageBarCompose", version.ref = "compose-message-bar" }
+compose-lifecycle-flow = {group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "compose-flow"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlinKsp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
-daggerHilt = {id = "com.google.dagger.hilt.android", version.ref = "hilt"}
-googleServices = {id = "com.google.gms.google-services", version.ref = "google-services"}
+kotlinKsp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+daggerHilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+googleServices = { id = "com.google.gms.google-services", version.ref = "google-services" }
 
 

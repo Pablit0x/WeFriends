@@ -8,20 +8,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.ps.wefriends.BuildConfig
 import com.ps.wefriends.navigation.NavGraph
 import com.ps.wefriends.navigation.Screen
 import com.ps.wefriends.presentation.core.WeFriendsTheme
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupTimber()
         setContent {
-            val startDestination = getStartDestination()
+            val startDestination = getStartDestination(auth)
             val navController = rememberNavController()
             WeFriendsTheme {
                 Surface(
@@ -36,16 +41,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private fun getStartDestination(): String {
-    // TODO:
-    // Logged in --> Home Screen
-    // Not Logged in --> Authentication Screen
-    return Screen.Authentication.route
+private fun getStartDestination(auth: FirebaseAuth): String {
+    return if (auth.currentUser != null) Screen.Home.route else Screen.Authentication.route
 }
 
 private fun setupTimber() {
     if (BuildConfig.DEBUG) {
         Timber.plant(Timber.DebugTree())
     }
-
 }

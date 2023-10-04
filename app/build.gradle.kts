@@ -77,6 +77,9 @@ dependencies {
     implementation(libs.hilt.navigation)
     ksp(libs.hilt.compiler)
 
+    // Lifecycle Aware Flow Collector
+    implementation(libs.compose.lifecycle.flow)
+
     // Compose Navigation
     implementation(libs.compose.navigation)
 
@@ -89,11 +92,18 @@ dependencies {
     // Splash Screen
     implementation(libs.splashScreen)
 
+    // Firebase Bom
+    implementation(platform(libs.firebase.bom))
+
     // Firebase Authentication
     implementation(libs.firebase.auth.ktx)
 
     // Timber - Logger
     implementation(libs.timber)
 
+    // One Tap Auth
+    implementation(libs.auth.one.tap)
 
+    // Message Bar
+    implementation(libs.message.bar)
 }
