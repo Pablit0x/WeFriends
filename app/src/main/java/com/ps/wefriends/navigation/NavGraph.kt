@@ -9,6 +9,9 @@ import androidx.navigation.compose.composable
 @Composable
 fun NavGraph(startDestinationRoute: String, navController: NavHostController) {
     NavHost(navController = navController, startDestination = startDestinationRoute) {
+        authenticationScreen()
+        onboardingScreen()
+        homeScreen()
     }
 }
 

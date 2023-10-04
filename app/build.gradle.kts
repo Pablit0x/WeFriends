@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.kotlinKsp)
     alias(libs.plugins.daggerHilt)
+    alias(libs.plugins.googleServices)
 }
 
 android {
@@ -40,6 +41,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -69,16 +71,29 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 
+
+    // Dagger Hilt
     implementation(libs.hilt.core)
+    implementation(libs.hilt.navigation)
     ksp(libs.hilt.compiler)
 
+    // Compose Navigation
     implementation(libs.compose.navigation)
 
+    // Extended Icons
     implementation(libs.compose.extendedIcons)
 
+    // Google Fonts
     implementation(libs.compose.googleFonts)
 
+    // Splash Screen
     implementation(libs.splashScreen)
+
+    // Firebase Authentication
+    implementation(libs.firebase.auth.ktx)
+
+    // Timber - Logger
+    implementation(libs.timber)
 
 
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "285343041070",
+    "project_id": "we-friends-6b41e",
+    "storage_bucket": "we-friends-6b41e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:285343041070:android:09abe45ee7001a2741c1bf",
+        "android_client_info": {
+          "package_name": "com.ps.wefriends"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgwChYduv_Fkxz4vECBO5jqtf53VogaWk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

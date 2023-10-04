@@ -13,6 +13,9 @@ hilt = "2.48"
 hilt-compose = "1.0.0"
 compose-navigation = "2.7.3"
 splash-screen = "1.0.1"
+firebase-auth-ktx = "22.1.2"
+google-services = "4.4.0"
+timber = "5.0.1"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -36,11 +39,14 @@ compose-navigation = {group = "androidx.navigation", name = "navigation-compose"
 splashScreen = {group = "androidx.core", name = "core-splashscreen", version.ref = "splash-screen"}
 compose-googleFonts = {group = "androidx.compose.ui", name = "ui-text-google-fonts"}
 compose-extendedIcons = {group = "androidx.compose.material", name = "material-icons-extended"}
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebase-auth-ktx" }
+timber = {group = "com.jakewharton.timber", name = "timber", version.ref = "timber"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinKsp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
 daggerHilt = {id = "com.google.dagger.hilt.android", version.ref = "hilt"}
+googleServices = {id = "com.google.gms.google-services", version.ref = "google-services"}
 
 

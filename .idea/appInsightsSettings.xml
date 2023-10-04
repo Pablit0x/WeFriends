@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.ps.wefriends" />
+                  <option name="mobileSdkAppId" value="1:285343041070:android:09abe45ee7001a2741c1bf" />
+                  <option name="projectId" value="we-friends-6b41e" />
+                  <option name="projectNumber" value="285343041070" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
