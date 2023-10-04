@@ -19,7 +19,4 @@ class AuthenticationViewModel @Inject constructor(
     val isAuthenticated = _isAuthenticated.asStateFlow()
 
 
-
-
-
 }

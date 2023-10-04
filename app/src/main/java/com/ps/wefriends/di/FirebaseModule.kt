@@ -15,7 +15,7 @@ object FirebaseModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseAuth() : FirebaseAuth {
+    fun provideFirebaseAuth(): FirebaseAuth {
         return Firebase.auth
     }
 
