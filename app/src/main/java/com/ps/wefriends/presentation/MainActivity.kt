@@ -43,8 +43,8 @@ private fun getStartDestination(): String {
     return Screen.Authentication.route
 }
 
-private fun setupTimber (){
-    if(BuildConfig.DEBUG){
+private fun setupTimber() {
+    if (BuildConfig.DEBUG) {
         Timber.plant(Timber.DebugTree())
     }
 
