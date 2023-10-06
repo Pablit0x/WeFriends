@@ -1,9 +1,7 @@
 package com.ps.wefriends.presentation.screens.authentication
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -48,8 +46,6 @@ fun AuthenticationScreen(
         },
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
-            .statusBarsPadding()
-            .navigationBarsPadding()
     )
 
     OneTapSignInWithGoogle(state = oneTapSignInState,
