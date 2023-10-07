@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +23,10 @@ import com.ps.wefriends.R
 
 @Composable
 fun AuthenticationContent(
-    isLoading: Boolean, onSignInButtonClicked: () -> Unit, modifier: Modifier = Modifier
+    isLoading: Boolean,
+    onGuestSignInClicked : () -> Unit,
+    onGoogleSignInClicked: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -44,7 +49,7 @@ fun AuthenticationContent(
                 Image(
                     modifier = Modifier.size(120.dp),
                     painter = painterResource(id = R.drawable.google_logo),
-                    contentDescription = stringResource(id = R.string.google_logo)
+                    contentDescription = stringResource(id = R.string.login_provider_logo)
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
@@ -58,9 +63,22 @@ fun AuthenticationContent(
                 )
             }
             Column(
-                modifier = Modifier.weight(2f), verticalArrangement = Arrangement.Bottom
+                modifier = Modifier.weight(3f), verticalArrangement = Arrangement.Bottom
             ) {
-                SignInGoogleButton(isLoading = isLoading, onClick = { onSignInButtonClicked() })
+
+
+                SignInButton(primaryText = stringResource(id = R.string.sign_in_as_a_email),
+                    iconRes =  Icons.Default.Person,
+                    isLoading = isLoading,
+                    onClick = { onGuestSignInClicked() })
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+
+                SignInButton(primaryText = stringResource(id = R.string.sign_in_with_google),
+                    iconRes = R.drawable.google_logo,
+                    isLoading = isLoading,
+                    onClick = { onGoogleSignInClicked() })
             }
         }
     }

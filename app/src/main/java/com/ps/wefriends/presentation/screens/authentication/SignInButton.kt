@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -36,13 +37,13 @@ import androidx.compose.ui.unit.dp
 import com.ps.wefriends.R
 
 @Composable
-fun SignInGoogleButton(
+fun SignInButton(
+    primaryText: String,
+    iconRes: Any,
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
-    primaryText: String = stringResource(id = R.string.sign_in_with_google),
     secondaryText: String = stringResource(id = R.string.please_wait),
-    icon: Int = R.drawable.google_logo,
-    shape: Shape = Shapes().extraSmall,
+    shape: Shape = Shapes().large,
     borderColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     borderStrokeWidth: Dp = 1.dp,
@@ -65,7 +66,7 @@ fun SignInGoogleButton(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(0.7f)
                 .padding(12.dp)
                 .animateContentSize(
                     animationSpec = tween(
@@ -75,11 +76,19 @@ fun SignInGoogleButton(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Icon(
-                painter = painterResource(id = icon),
-                contentDescription = stringResource(id = R.string.google_logo),
-                tint = Color.Unspecified
-            )
+            if(iconRes is ImageVector){
+                Icon(
+                    imageVector = iconRes,
+                    contentDescription = stringResource(id = R.string.login_provider_logo),
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            } else if (iconRes is Int){
+                Icon(
+                    painter = painterResource(id = iconRes),
+                    contentDescription = stringResource(id = R.string.login_provider_logo),
+                    tint = Color.Unspecified
+                )
+            }
             Spacer(modifier = Modifier.width(8.dp))
 
             Text(

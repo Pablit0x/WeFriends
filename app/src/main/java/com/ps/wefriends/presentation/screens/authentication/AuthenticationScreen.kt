@@ -22,7 +22,8 @@ fun AuthenticationScreen(
     messageBarState: MessageBarState,
     isLoading: Boolean,
     isAuthenticated: Boolean,
-    onSignInButtonClicked: () -> Unit,
+    onGuestSignInClicked: () -> Unit,
+    onGoogleSignInClicked: () -> Unit,
     onSuccessfulFirebaseSignIn: (String) -> Unit,
     onFailedFirebaseSignIn: (Exception) -> Unit,
     onDialogDismissed: (String) -> Unit,
@@ -39,7 +40,8 @@ fun AuthenticationScreen(
             ContentWithMessageBar(messageBarState = messageBarState) {
                 AuthenticationContent(
                     isLoading = isLoading,
-                    onSignInButtonClicked = { onSignInButtonClicked() },
+                    onGuestSignInClicked = onGuestSignInClicked,
+                    onGoogleSignInClicked = onGoogleSignInClicked,
                     modifier = Modifier.padding(padding)
                 )
             }
@@ -48,7 +50,8 @@ fun AuthenticationScreen(
             .background(MaterialTheme.colorScheme.surface)
     )
 
-    OneTapSignInWithGoogle(state = oneTapSignInState,
+    OneTapSignInWithGoogle(
+        state = oneTapSignInState,
         clientId = CLIENT_ID,
         onTokenIdReceived = { tokenId ->
             val credential = GoogleAuthProvider.getCredential(tokenId, null)
@@ -61,6 +64,7 @@ fun AuthenticationScreen(
                     }
                 }
         },
+
         onDialogDismissed = { message ->
             onDialogDismissed(message)
         })

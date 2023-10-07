@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,5 +19,8 @@ class AuthenticationViewModel @Inject constructor(
     private var _isAuthenticated = MutableStateFlow(false)
     val isAuthenticated = _isAuthenticated.asStateFlow()
 
+    fun setLoading(isLoading: Boolean) {
+        _isLoading.update { isLoading }
+    }
 
 }
