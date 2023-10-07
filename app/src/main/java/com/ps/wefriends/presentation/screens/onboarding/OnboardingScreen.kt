@@ -18,15 +18,15 @@ import kotlinx.coroutines.launch
 fun OnboardingScreen(navigateHome: () -> Unit) {
 
     val firstOnboardingItem = OnboardingItem(
-        lottieAnimation = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.morty)),
+        lottieAnimation = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.onboarding_first_animation)),
         description = stringResource(id = R.string.first_onboarding_screen_description)
     )
     val secondOnboardingItem = OnboardingItem(
-        lottieAnimation = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.morty)),
+        lottieAnimation = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.onboarding_second_animation)),
         description = stringResource(id = R.string.second_onboarding_screen_description)
     )
     val thirdOnboardingItem = OnboardingItem(
-        lottieAnimation = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.morty)),
+        lottieAnimation = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.onboarding_third_animation)),
         description = stringResource(id = R.string.third_onboarding_screen_description)
     )
 
