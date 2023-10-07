@@ -24,8 +24,8 @@ import com.ps.wefriends.R
 @Composable
 fun AuthenticationContent(
     isGuestLoading: Boolean,
-    isGoogleLoading : Boolean,
-    onGuestSignInClicked : () -> Unit,
+    isGoogleLoading: Boolean,
+    onGuestSignInClicked: () -> Unit,
     onGoogleSignInClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -69,7 +69,7 @@ fun AuthenticationContent(
 
 
                 SignInButton(primaryText = stringResource(id = R.string.sign_in_as_a_email),
-                    iconRes =  Icons.Default.Person,
+                    iconRes = Icons.Default.Person,
                     isLoading = isGuestLoading,
                     onClick = { onGuestSignInClicked() })
 

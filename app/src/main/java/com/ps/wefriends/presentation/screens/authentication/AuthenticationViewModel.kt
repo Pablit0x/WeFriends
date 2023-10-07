@@ -25,17 +25,19 @@ class AuthenticationViewModel @Inject constructor(
     fun setGoogleLoading(isLoading: Boolean) {
         _isGoogleLoading.update { isLoading }
     }
+
     private fun setGuestLoading(isLoading: Boolean) {
         _isGuestLoading.update { isLoading }
     }
-    fun signInAsGuest(onSuccess: () -> Unit, onError : (Exception) -> Unit) {
+
+    fun signInAsGuest(onSuccess: () -> Unit, onError: (Exception) -> Unit) {
         setGuestLoading(isLoading = true)
         auth.signInAnonymously().addOnCompleteListener { result ->
             setGuestLoading(isLoading = false)
-            if(result.isSuccessful){
+            if (result.isSuccessful) {
                 onSuccess()
             } else {
-                result.exception?.let{onError(it)}
+                result.exception?.let { onError(it) }
             }
         }
     }

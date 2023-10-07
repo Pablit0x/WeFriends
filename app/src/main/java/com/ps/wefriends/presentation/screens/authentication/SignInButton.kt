@@ -76,13 +76,13 @@ fun SignInButton(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            if(iconRes is ImageVector){
+            if (iconRes is ImageVector) {
                 Icon(
                     imageVector = iconRes,
                     contentDescription = stringResource(id = R.string.login_provider_logo),
                     tint = MaterialTheme.colorScheme.onBackground
                 )
-            } else if (iconRes is Int){
+            } else if (iconRes is Int) {
                 Icon(
                     painter = painterResource(id = iconRes),
                     contentDescription = stringResource(id = R.string.login_provider_logo),
