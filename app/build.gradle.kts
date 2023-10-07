@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlinKsp)
     alias(libs.plugins.daggerHilt)
     alias(libs.plugins.googleServices)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
@@ -109,4 +110,8 @@ dependencies {
 
     // Lottie Animation
     implementation(libs.lottie.animations)
+
+    // Datastore
+    implementation(libs.datastore)
+    implementation(libs.serialization)
 }

@@ -20,6 +20,8 @@ auth-one-tap = "1.0.3"
 compose-message-bar = "1.0.5"
 compose-flow = "2.7.0-alpha02"
 lottie-animation = "6.0.0"
+datastore = "1.0.0"
+kotlinx-serialization = "1.6.0"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -50,7 +52,8 @@ auth-one-tap = { group = "com.github.stevdza-san", name = "OneTapCompose", versi
 message-bar = { group = "com.github.stevdza-san", name = "MessageBarCompose", version.ref = "compose-message-bar" }
 compose-lifecycle-flow = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "compose-flow" }
 lottie-animations = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie-animation" }
-
+datastore = {group = "androidx.datastore", name = "datastore", version.ref = "datastore"}
+serialization = {group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref ="kotlinx-serialization"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -58,5 +61,6 @@ kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinKsp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 daggerHilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "google-services" }
+kotlinSerialization = {id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
 
 

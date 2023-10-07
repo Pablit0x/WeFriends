@@ -7,10 +7,12 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.ps.wefriends.R
+import com.ps.wefriends.util.dataStore
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -35,17 +37,34 @@ fun OnboardingScreen(navigateHome: () -> Unit) {
     val horizontalPagerState = rememberPagerState(pageCount = { onboardingItems.size })
     val currentPage = horizontalPagerState.currentPage
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         OnboardingContent(horizontalPagerState = horizontalPagerState, onSkipButtonClicked = {
-            navigateHome()
+            scope.launch {
+                context.dataStore.updateData {
+                    it.copy(
+                        showOnboarding = true
+                    )
+                }
+            }
+//            navigateHome()
         }, onNextButtonClicked = {
             scope.launch {
                 horizontalPagerState.animateScrollToPage(currentPage + 1)
             }
-        }, onGetStartedButtonClicked = navigateHome, onboardingItems = onboardingItems
+        }, onGetStartedButtonClicked = {
+            scope.launch {
+                context.dataStore.updateData {
+                    it.copy(
+                        showOnboarding = false
+                    )
+                }
+            }
+//            navigateHome()
+        }, onboardingItems = onboardingItems
         )
     }
 }
