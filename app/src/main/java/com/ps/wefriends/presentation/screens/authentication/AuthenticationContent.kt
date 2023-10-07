@@ -23,7 +23,8 @@ import com.ps.wefriends.R
 
 @Composable
 fun AuthenticationContent(
-    isLoading: Boolean,
+    isGuestLoading: Boolean,
+    isGoogleLoading : Boolean,
     onGuestSignInClicked : () -> Unit,
     onGoogleSignInClicked: () -> Unit,
     modifier: Modifier = Modifier
@@ -69,7 +70,7 @@ fun AuthenticationContent(
 
                 SignInButton(primaryText = stringResource(id = R.string.sign_in_as_a_email),
                     iconRes =  Icons.Default.Person,
-                    isLoading = isLoading,
+                    isLoading = isGuestLoading,
                     onClick = { onGuestSignInClicked() })
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -77,7 +78,7 @@ fun AuthenticationContent(
 
                 SignInButton(primaryText = stringResource(id = R.string.sign_in_with_google),
                     iconRes = R.drawable.google_logo,
-                    isLoading = isLoading,
+                    isLoading = isGoogleLoading,
                     onClick = { onGoogleSignInClicked() })
             }
         }

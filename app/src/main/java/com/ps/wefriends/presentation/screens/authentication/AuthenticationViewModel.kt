@@ -13,14 +13,30 @@ class AuthenticationViewModel @Inject constructor(
     val auth: FirebaseAuth
 ) : ViewModel() {
 
-    private var _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
+    private var _isGoogleLoading = MutableStateFlow(false)
+    val isGoogleLoading = _isGoogleLoading.asStateFlow()
+
+    private var _isGuestLoading = MutableStateFlow(false)
+    val isGuestLoading = _isGuestLoading.asStateFlow()
 
     private var _isAuthenticated = MutableStateFlow(false)
     val isAuthenticated = _isAuthenticated.asStateFlow()
 
-    fun setLoading(isLoading: Boolean) {
-        _isLoading.update { isLoading }
+    fun setGoogleLoading(isLoading: Boolean) {
+        _isGoogleLoading.update { isLoading }
     }
-
+    private fun setGuestLoading(isLoading: Boolean) {
+        _isGuestLoading.update { isLoading }
+    }
+    fun signInAsGuest(onSuccess: () -> Unit, onError : (Exception) -> Unit) {
+        setGuestLoading(isLoading = true)
+        auth.signInAnonymously().addOnCompleteListener { result ->
+            setGuestLoading(isLoading = false)
+            if(result.isSuccessful){
+                onSuccess()
+            } else {
+                result.exception?.let{onError(it)}
+            }
+        }
+    }
 }

@@ -31,29 +31,38 @@ fun NavGraphBuilder.authenticationScreen() {
         val auth = viewModel.auth
         val oneTapSignInState = rememberOneTapSignInState()
         val messageBarState = rememberMessageBarState()
-        val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+        val isGuestLoading by viewModel.isGuestLoading.collectAsStateWithLifecycle()
+        val isGoogleLoading by viewModel.isGoogleLoading.collectAsStateWithLifecycle()
         val isAuthenticated by viewModel.isAuthenticated.collectAsStateWithLifecycle()
+
 
         AuthenticationScreen(auth = auth,
             oneTapSignInState = oneTapSignInState,
             messageBarState = messageBarState,
-            isLoading = isLoading,
+            isGuestLoading = isGuestLoading,
+            isGoogleLoading = isGoogleLoading,
             isAuthenticated = isAuthenticated,
-            onGuestSignInClicked = { /*TODO*/ },
+            onGuestSignInClicked = {
+                viewModel.signInAsGuest(onSuccess = {
+                    messageBarState.addSuccess(message = context.getString(R.string.successful_sign_in))
+                }, onError = { exception ->
+                    messageBarState.addError(exception)
+                })
+            },
             onGoogleSignInClicked = {
                 oneTapSignInState.open()
-                viewModel.setLoading(isLoading = true)
+                viewModel.setGoogleLoading(isLoading = true)
             },
             onSuccessfulFirebaseSignIn = {
                 messageBarState.addSuccess(message = context.getString(R.string.successful_sign_in))
             },
             onFailedFirebaseSignIn = {
                 messageBarState.addError(it)
-                viewModel.setLoading(isLoading = false)
+                viewModel.setGoogleLoading(isLoading = false)
             },
             onDialogDismissed = { errorMsg ->
                 messageBarState.addError(Exception(errorMsg))
-                viewModel.setLoading(isLoading = false)
+                viewModel.setGoogleLoading(isLoading = false)
             }) {
 
         }

@@ -2,11 +2,14 @@ package com.ps.wefriends.presentation.screens.authentication
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.ps.wefriends.util.Constants.CLIENT_ID
@@ -20,7 +23,8 @@ fun AuthenticationScreen(
     auth: FirebaseAuth,
     oneTapSignInState: OneTapSignInState,
     messageBarState: MessageBarState,
-    isLoading: Boolean,
+    isGuestLoading: Boolean,
+    isGoogleLoading: Boolean,
     isAuthenticated: Boolean,
     onGuestSignInClicked: () -> Unit,
     onGoogleSignInClicked: () -> Unit,
@@ -29,6 +33,7 @@ fun AuthenticationScreen(
     onDialogDismissed: (String) -> Unit,
     navigateHome: () -> Unit
 ) {
+
     LaunchedEffect(key1 = isAuthenticated) {
         if (isAuthenticated) {
             navigateHome()
@@ -39,7 +44,8 @@ fun AuthenticationScreen(
         content = { padding ->
             ContentWithMessageBar(messageBarState = messageBarState) {
                 AuthenticationContent(
-                    isLoading = isLoading,
+                    isGuestLoading = isGuestLoading,
+                    isGoogleLoading = isGoogleLoading,
                     onGuestSignInClicked = onGuestSignInClicked,
                     onGoogleSignInClicked = onGoogleSignInClicked,
                     modifier = Modifier.padding(padding)
@@ -47,6 +53,7 @@ fun AuthenticationScreen(
             }
         },
         modifier = Modifier
+            .statusBarsPadding()
             .background(MaterialTheme.colorScheme.surface)
     )
 

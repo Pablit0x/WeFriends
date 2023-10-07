@@ -7,6 +7,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
@@ -28,9 +29,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
-                scrim = Color.TRANSPARENT, darkScrim = Color.TRANSPARENT
-            ), navigationBarStyle = SystemBarStyle.light(
+            navigationBarStyle = SystemBarStyle.light(
                 scrim = Color.TRANSPARENT, darkScrim = Color.TRANSPARENT
             )
         )
@@ -39,13 +38,9 @@ class MainActivity : ComponentActivity() {
             val startDestination = getStartDestination(auth)
             val navController = rememberNavController()
             WeFriendsTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
-                ) {
                     NavGraph(
                         startDestinationRoute = startDestination, navController = navController
                     )
-                }
             }
         }
     }
