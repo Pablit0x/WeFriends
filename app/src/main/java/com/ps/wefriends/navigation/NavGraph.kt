@@ -13,7 +13,6 @@ import com.ps.wefriends.R
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationScreen
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationViewModel
 import com.ps.wefriends.presentation.screens.onboarding.OnboardingScreen
-import com.ps.wefriends.presentation.screens.onboarding.OnboardingViewModel
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
 import timber.log.Timber
@@ -72,8 +71,10 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
                 viewModel.setGoogleLoading(isLoading = false)
             },
             navigateHome = {},
-            navigateOnboarding = { navigateOnboarding()
-            Timber.d("navigating onboarding")}
+            navigateOnboarding = {
+                navigateOnboarding()
+                Timber.d("navigating onboarding")
+            }
         )
     }
 }

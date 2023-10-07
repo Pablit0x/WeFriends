@@ -86,14 +86,17 @@ fun OnboardingContent(
                 progress
             })
         }
-        
+
         Spacer(modifier = Modifier.height(12.dp))
-        
+
         Text(text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.")
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        PageIndicator(numberOfPages = animations.size, currentPage = horizontalPagerState.currentPage)
+        PageIndicator(
+            numberOfPages = animations.size,
+            currentPage = horizontalPagerState.currentPage
+        )
 
         Spacer(modifier = Modifier.height(32.dp))
 

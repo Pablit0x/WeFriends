@@ -37,7 +37,7 @@ fun AuthenticationScreen(
     LaunchedEffect(key1 = isAuthenticated, key2 = requireOnboarding) {
         if (isAuthenticated && requireOnboarding) {
             navigateOnboarding()
-        } else if (isAuthenticated){
+        } else if (isAuthenticated) {
             navigateHome()
         }
     }

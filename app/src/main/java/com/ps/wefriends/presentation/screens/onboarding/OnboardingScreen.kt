@@ -16,6 +16,9 @@ fun OnboardingScreen() {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        OnboardingContent(horizontalPagerState = horizontalPagerState, onSkipButtonClicked = { /*TODO*/ }, onNextButtonClicked = {})
+        OnboardingContent(
+            horizontalPagerState = horizontalPagerState,
+            onSkipButtonClicked = { /*TODO*/ },
+            onNextButtonClicked = {})
     }
 }
