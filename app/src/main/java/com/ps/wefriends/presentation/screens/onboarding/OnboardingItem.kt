@@ -4,6 +4,6 @@ import com.airbnb.lottie.compose.LottieCompositionResult
 
 data class OnboardingItem(
     val index: Int,
-    val animationSpec: LottieCompositionResult?,
+    val lottieAnimation: LottieCompositionResult?,
     val description: String
 )

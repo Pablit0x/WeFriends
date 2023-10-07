@@ -20,9 +20,12 @@ import timber.log.Timber
 @Composable
 fun NavGraph(startDestinationRoute: String, navController: NavHostController) {
     NavHost(navController = navController, startDestination = startDestinationRoute) {
-        authenticationScreen(navigateHome = {},
-            navigateOnboarding = { navController.navigate(Screen.Onboarding.route) })
-        onboardingScreen()
+        authenticationScreen(navigateHome = {
+            navController.navigate(Screen.Home.route)
+        }, navigateOnboarding = { navController.navigate(Screen.Onboarding.route) })
+        onboardingScreen(navigateHome = {
+            navController.navigate(Screen.Home.route)
+        })
         homeScreen()
     }
 }
@@ -40,7 +43,8 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
         val requireOnboarding by viewModel.requireOnboarding.collectAsStateWithLifecycle()
 
 
-        AuthenticationScreen(auth = auth,
+        AuthenticationScreen(
+            auth = auth,
             oneTapSignInState = oneTapSignInState,
             messageBarState = messageBarState,
             isGuestLoading = isGuestLoading,
@@ -70,18 +74,15 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
                 messageBarState.addError(Exception(errorMsg))
                 viewModel.setGoogleLoading(isLoading = false)
             },
-            navigateHome = {},
-            navigateOnboarding = {
-                navigateOnboarding()
-                Timber.d("navigating onboarding")
-            }
+            navigateHome = navigateHome,
+            navigateOnboarding = navigateOnboarding
         )
     }
 }
 
-fun NavGraphBuilder.onboardingScreen() {
+fun NavGraphBuilder.onboardingScreen(navigateHome: () -> Unit) {
     composable(route = Screen.Onboarding.route) {
-        OnboardingScreen()
+        OnboardingScreen(navigateHome = navigateHome)
     }
 }
 

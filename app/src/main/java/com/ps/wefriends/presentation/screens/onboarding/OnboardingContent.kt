@@ -44,16 +44,14 @@ fun OnboardingContent(
 
     var isPlaying by remember { mutableStateOf(true) }
     val progress by animateLottieCompositionAsState(
-        composition = onboardingItems[horizontalPagerState.currentPage].animationSpec?.value,
+        composition = onboardingItems[horizontalPagerState.currentPage].lottieAnimation?.value,
         isPlaying = isPlaying
     )
 
     LaunchedEffect(key1 = progress) {
-        if (progress == 0f) {
-            isPlaying = true
-        }
-        if (progress == 1f) {
-            isPlaying = false
+        when (progress) {
+            0f -> isPlaying = true
+            1f -> isPlaying = false
         }
     }
 
@@ -63,37 +61,39 @@ fun OnboardingContent(
             .padding(16.dp)
     ) {
         Column(
-            modifier = Modifier.weight(8f),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.weight(5f)
         ) {
 
-            HorizontalPager(state = horizontalPagerState) { currentPageIndex ->
+            HorizontalPager(
+                state = horizontalPagerState
+            ) { currentPageIndex ->
                 LottieAnimation(
-                    composition = onboardingItems[currentPageIndex].animationSpec?.value,
+                    composition = onboardingItems[currentPageIndex].lottieAnimation?.value,
                     progress = {
-                        if (progress == 1f) {
-                            isPlaying = true
-                        }
+                        if (progress == 1f) isPlaying = true
                         progress
-                    })
+                    },
+                )
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(text = onboardingItems[horizontalPagerState.currentPage].description)
 
             Spacer(modifier = Modifier.height(12.dp))
 
             PageIndicator(
                 numberOfPages = onboardingItems.size, currentPage = horizontalPagerState.currentPage
             )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(text = onboardingItems[horizontalPagerState.currentPage].description, minLines = 8)
         }
+
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(2f),
+                .weight(1f)
+                .padding(vertical = 16.dp),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -107,7 +107,7 @@ fun OnboardingContent(
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = Icons.Default.NavigateNext,
-                    contentDescription = "Next onboarding screen"
+                    contentDescription = stringResource(id = R.string.next)
                 )
             }
         }

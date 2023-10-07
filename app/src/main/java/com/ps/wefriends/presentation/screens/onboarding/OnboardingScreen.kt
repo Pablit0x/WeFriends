@@ -19,18 +19,18 @@ fun OnboardingScreen(navigateHome: () -> Unit) {
 
     val firstOnboardingItem = OnboardingItem(
         index = 1,
-        animationSpec = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.morty)),
-        description = stringResource(id = R.string.successful_sign_in)
+        lottieAnimation = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.morty)),
+        description = stringResource(id = R.string.first_onboarding_screen_description)
     )
     val secondOnboardingItem = OnboardingItem(
         index = 2,
-        animationSpec = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.morty)),
-        description = stringResource(id = R.string.sign_in_as_a_email)
+        lottieAnimation = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.morty)),
+        description = stringResource(id = R.string.second_onboarding_screen_description)
     )
     val thirdOnboardingItem = OnboardingItem(
         index = 3,
-        animationSpec = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.morty)),
-        description = stringResource(id = R.string.please_wait)
+        lottieAnimation = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.morty)),
+        description = stringResource(id = R.string.third_onboarding_screen_description)
     )
 
     val onboardingItems = listOf(firstOnboardingItem, secondOnboardingItem, thirdOnboardingItem)
