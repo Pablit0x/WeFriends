@@ -23,7 +23,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.ps.wefriends.R
 import com.ps.wefriends.presentation.components.PageIndicator
 
@@ -46,7 +44,8 @@ fun OnboardingContent(
 
     var isPlaying by remember { mutableStateOf(true) }
     val progress by animateLottieCompositionAsState(
-        composition = onboardingItems[horizontalPagerState.currentPage].animationSpec?.value, isPlaying = isPlaying
+        composition = onboardingItems[horizontalPagerState.currentPage].animationSpec?.value,
+        isPlaying = isPlaying
     )
 
     LaunchedEffect(key1 = progress) {
@@ -71,12 +70,13 @@ fun OnboardingContent(
 
             HorizontalPager(state = horizontalPagerState) { currentPageIndex ->
                 LottieAnimation(
-                    composition = onboardingItems[currentPageIndex].animationSpec?.value, progress = {
-                    if (progress == 1f) {
-                        isPlaying = true
-                    }
-                    progress
-                })
+                    composition = onboardingItems[currentPageIndex].animationSpec?.value,
+                    progress = {
+                        if (progress == 1f) {
+                            isPlaying = true
+                        }
+                        progress
+                    })
             }
 
             Spacer(modifier = Modifier.height(12.dp))
