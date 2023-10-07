@@ -15,7 +15,6 @@ import com.ps.wefriends.presentation.screens.authentication.AuthenticationViewMo
 import com.ps.wefriends.presentation.screens.onboarding.OnboardingScreen
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
-import timber.log.Timber
 
 @Composable
 fun NavGraph(startDestinationRoute: String, navController: NavHostController) {
