@@ -12,19 +12,23 @@ import androidx.navigation.compose.composable
 import com.ps.wefriends.R
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationScreen
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationViewModel
+import com.ps.wefriends.presentation.screens.onboarding.OnboardingScreen
+import com.ps.wefriends.presentation.screens.onboarding.OnboardingViewModel
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
+import timber.log.Timber
 
 @Composable
 fun NavGraph(startDestinationRoute: String, navController: NavHostController) {
     NavHost(navController = navController, startDestination = startDestinationRoute) {
-        authenticationScreen()
+        authenticationScreen(navigateHome = {},
+            navigateOnboarding = { navController.navigate(Screen.Onboarding.route) })
         onboardingScreen()
         homeScreen()
     }
 }
 
-fun NavGraphBuilder.authenticationScreen() {
+fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboarding: () -> Unit) {
     composable(route = Screen.Authentication.route) {
         val viewModel = hiltViewModel<AuthenticationViewModel>()
         val context = LocalContext.current
@@ -34,6 +38,7 @@ fun NavGraphBuilder.authenticationScreen() {
         val isGuestLoading by viewModel.isGuestLoading.collectAsStateWithLifecycle()
         val isGoogleLoading by viewModel.isGoogleLoading.collectAsStateWithLifecycle()
         val isAuthenticated by viewModel.isAuthenticated.collectAsStateWithLifecycle()
+        val requireOnboarding by viewModel.requireOnboarding.collectAsStateWithLifecycle()
 
 
         AuthenticationScreen(auth = auth,
@@ -42,9 +47,11 @@ fun NavGraphBuilder.authenticationScreen() {
             isGuestLoading = isGuestLoading,
             isGoogleLoading = isGoogleLoading,
             isAuthenticated = isAuthenticated,
+            requireOnboarding = requireOnboarding,
             onGuestSignInClicked = {
                 viewModel.signInAsGuest(onSuccess = {
                     messageBarState.addSuccess(message = context.getString(R.string.successful_sign_in))
+                    viewModel.setAuthenticated(isAuthenticated = true)
                 }, onError = { exception ->
                     messageBarState.addError(exception)
                 })
@@ -63,15 +70,17 @@ fun NavGraphBuilder.authenticationScreen() {
             onDialogDismissed = { errorMsg ->
                 messageBarState.addError(Exception(errorMsg))
                 viewModel.setGoogleLoading(isLoading = false)
-            }) {
-
-        }
+            },
+            navigateHome = {},
+            navigateOnboarding = { navigateOnboarding()
+            Timber.d("navigating onboarding")}
+        )
     }
 }
 
 fun NavGraphBuilder.onboardingScreen() {
     composable(route = Screen.Onboarding.route) {
-
+        OnboardingScreen()
     }
 }
 

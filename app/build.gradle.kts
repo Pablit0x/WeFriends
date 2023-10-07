@@ -106,4 +106,7 @@ dependencies {
 
     // Message Bar
     implementation(libs.message.bar)
+
+    // Lottie Animation
+    implementation(libs.lottie.animations)
 }

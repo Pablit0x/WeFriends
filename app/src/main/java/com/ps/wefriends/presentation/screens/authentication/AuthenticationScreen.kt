@@ -24,16 +24,20 @@ fun AuthenticationScreen(
     isGuestLoading: Boolean,
     isGoogleLoading: Boolean,
     isAuthenticated: Boolean,
+    requireOnboarding: Boolean,
     onGuestSignInClicked: () -> Unit,
     onGoogleSignInClicked: () -> Unit,
     onSuccessfulFirebaseSignIn: (String) -> Unit,
     onFailedFirebaseSignIn: (Exception) -> Unit,
     onDialogDismissed: (String) -> Unit,
-    navigateHome: () -> Unit
+    navigateHome: () -> Unit,
+    navigateOnboarding: () -> Unit
 ) {
 
-    LaunchedEffect(key1 = isAuthenticated) {
-        if (isAuthenticated) {
+    LaunchedEffect(key1 = isAuthenticated, key2 = requireOnboarding) {
+        if (isAuthenticated && requireOnboarding) {
+            navigateOnboarding()
+        } else if (isAuthenticated){
             navigateHome()
         }
     }

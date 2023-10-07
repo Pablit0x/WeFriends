@@ -19,6 +19,7 @@ firebase-bom = "32.3.1"
 auth-one-tap = "1.0.3"
 compose-message-bar = "1.0.5"
 compose-flow = "2.7.0-alpha02"
+lottie-animation = "6.0.0"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -47,7 +48,9 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 auth-one-tap = { group = "com.github.stevdza-san", name = "OneTapCompose", version.ref = "auth-one-tap" }
 message-bar = { group = "com.github.stevdza-san", name = "MessageBarCompose", version.ref = "compose-message-bar" }
-compose-lifecycle-flow = {group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "compose-flow"}
+compose-lifecycle-flow = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "compose-flow" }
+lottie-animations = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie-animation" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
