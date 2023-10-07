@@ -2,6 +2,7 @@ package com.ps.wefriends.presentation.screens.onboarding
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,6 +40,7 @@ fun OnboardingContent(
     horizontalPagerState: PagerState,
     onSkipButtonClicked: () -> Unit,
     onNextButtonClicked: () -> Unit,
+    onGetStartedButtonClicked: () -> Unit,
     onboardingItems: List<OnboardingItem>,
 ) {
 
@@ -89,26 +91,43 @@ fun OnboardingContent(
         }
 
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(vertical = 16.dp),
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            OutlinedButton(onClick = onSkipButtonClicked) {
-                Text(text = stringResource(id = R.string.skip))
+        if (horizontalPagerState.currentPage == horizontalPagerState.pageCount - 1) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+                    .weight(1f),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                Button(
+                    onClick = onGetStartedButtonClicked,
+                    modifier = Modifier.fillMaxWidth(0.6f)
+                ) {
+                    Text(text = stringResource(id = R.string.get_started))
+                }
             }
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(vertical = 16.dp),
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
 
-            Button(onClick = onNextButtonClicked) {
-                Text(text = stringResource(id = R.string.next))
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = Icons.Default.NavigateNext,
-                    contentDescription = stringResource(id = R.string.next)
-                )
+                OutlinedButton(onClick = onSkipButtonClicked) {
+                    Text(text = stringResource(id = R.string.skip))
+                }
+
+                Button(onClick = onNextButtonClicked) {
+                    Text(text = stringResource(id = R.string.next))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = Icons.Default.NavigateNext,
+                        contentDescription = stringResource(id = R.string.next)
+                    )
+                }
             }
         }
     }

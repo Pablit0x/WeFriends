@@ -18,23 +18,22 @@ import kotlinx.coroutines.launch
 fun OnboardingScreen(navigateHome: () -> Unit) {
 
     val firstOnboardingItem = OnboardingItem(
-        index = 1,
         lottieAnimation = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.morty)),
         description = stringResource(id = R.string.first_onboarding_screen_description)
     )
     val secondOnboardingItem = OnboardingItem(
-        index = 2,
         lottieAnimation = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.morty)),
         description = stringResource(id = R.string.second_onboarding_screen_description)
     )
     val thirdOnboardingItem = OnboardingItem(
-        index = 3,
         lottieAnimation = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.morty)),
         description = stringResource(id = R.string.third_onboarding_screen_description)
     )
 
     val onboardingItems = listOf(firstOnboardingItem, secondOnboardingItem, thirdOnboardingItem)
+
     val horizontalPagerState = rememberPagerState(pageCount = { onboardingItems.size })
+    val currentPage = horizontalPagerState.currentPage
     val scope = rememberCoroutineScope()
 
     Column(
@@ -43,15 +42,10 @@ fun OnboardingScreen(navigateHome: () -> Unit) {
         OnboardingContent(horizontalPagerState = horizontalPagerState, onSkipButtonClicked = {
             navigateHome()
         }, onNextButtonClicked = {
-            val currentPage = horizontalPagerState.currentPage
-            if (currentPage < horizontalPagerState.pageCount) {
-                scope.launch {
-                    horizontalPagerState.animateScrollToPage(currentPage + 1)
-                }
-            } else {
-                navigateHome()
+            scope.launch {
+                horizontalPagerState.animateScrollToPage(currentPage + 1)
             }
-        }, onboardingItems = onboardingItems
+        }, onGetStartedButtonClicked = navigateHome, onboardingItems = onboardingItems
         )
     }
 }
