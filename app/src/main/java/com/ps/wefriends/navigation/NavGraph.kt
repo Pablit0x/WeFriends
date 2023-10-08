@@ -1,8 +1,12 @@
 package com.ps.wefriends.navigation
 
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -10,12 +14,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.ps.wefriends.R
+import com.ps.wefriends.presentation.components.CustomAlertDialog
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationScreen
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationViewModel
+import com.ps.wefriends.presentation.screens.home.HomeScreen
+import com.ps.wefriends.presentation.screens.home.HomeViewModel
 import com.ps.wefriends.presentation.screens.onboarding.OnboardingScreen
 import com.ps.wefriends.presentation.screens.onboarding.OnboardingViewModel
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
+import kotlinx.coroutines.launch
 
 @Composable
 fun NavGraph(startDestinationRoute: String, navController: NavHostController) {
@@ -26,7 +34,9 @@ fun NavGraph(startDestinationRoute: String, navController: NavHostController) {
         onboardingScreen(navigateHome = {
             navController.navigate(Screen.Home.route)
         })
-        homeScreen()
+        homeScreen(navigateAuth = {
+            navController.navigate(Screen.Authentication.route)
+        })
     }
 }
 
@@ -41,7 +51,6 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
         val isGoogleLoading by viewModel.isGoogleLoading.collectAsStateWithLifecycle()
         val isAuthenticated by viewModel.isAuthenticated.collectAsStateWithLifecycle()
         val requireOnboarding by viewModel.requireOnboarding.collectAsStateWithLifecycle()
-
 
         AuthenticationScreen(
             auth = auth,
@@ -90,8 +99,28 @@ fun NavGraphBuilder.onboardingScreen(navigateHome: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.homeScreen() {
+fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit) {
     composable(route = Screen.Home.route) {
+        val viewModel = hiltViewModel<HomeViewModel>()
+        val isSignOutDialogOpen by viewModel.isSignOutDialogOpen.collectAsStateWithLifecycle()
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+        val scope = rememberCoroutineScope()
 
+        HomeScreen(drawerState = drawerState, onOpenDrawerIconClicked = {
+            scope.launch {
+                drawerState.open()
+            }
+        }, onSignOutClicked = {
+            viewModel.openSignOutDialog()
+        })
+
+        CustomAlertDialog(title = stringResource(id = R.string.sign_out),
+            message = stringResource(id = R.string.sign_out_message),
+            isOpen = isSignOutDialogOpen,
+            onCloseDialog = { viewModel.closeSignOutDialog() },
+            onConfirmClicked = {
+                viewModel.signOut()
+                navigateAuth()
+            })
     }
 }
