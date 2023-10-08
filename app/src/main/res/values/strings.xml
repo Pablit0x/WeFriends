@@ -9,6 +9,7 @@
     <string name="skip">Skip</string>
     <string name="next">Next</string>
     <string name="get_started">GET STARTED</string>
+    <string name="sign_out">Sign out</string>
     <string name="first_onboarding_screen_description">Welcome to We Friends!\nDiscover and create surveys with your friends.</string>
     <string name="second_onboarding_screen_description">Select a survey and share the code with your friends to join the lobby.</string>
     <string name="third_onboarding_screen_description">See answers reflected in the colorful pie charts."</string>

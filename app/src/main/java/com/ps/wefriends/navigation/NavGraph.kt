@@ -13,6 +13,7 @@ import com.ps.wefriends.R
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationScreen
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationViewModel
 import com.ps.wefriends.presentation.screens.onboarding.OnboardingScreen
+import com.ps.wefriends.presentation.screens.onboarding.OnboardingViewModel
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
 
@@ -81,7 +82,11 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
 
 fun NavGraphBuilder.onboardingScreen(navigateHome: () -> Unit) {
     composable(route = Screen.Onboarding.route) {
-        OnboardingScreen(navigateHome = navigateHome)
+        val viewModel = hiltViewModel<OnboardingViewModel>()
+        OnboardingScreen(setAsCompleted = {
+            viewModel.setOnboardingAsCompleted()
+            navigateHome()
+        })
     }
 }
 

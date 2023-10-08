@@ -34,7 +34,7 @@ class AuthenticationViewModel @Inject constructor(
     }
 
     fun setAuthenticated(isAuthenticated: Boolean) {
-        _isAuthenticated.update { true }
+        _isAuthenticated.update { isAuthenticated }
     }
 
     fun signInAsGuest(onSuccess: () -> Unit, onError: (Exception) -> Unit) {
