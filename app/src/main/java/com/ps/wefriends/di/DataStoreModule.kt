@@ -20,7 +20,7 @@ object DataStoreModule {
 
     @Provides
     @Singleton
-    fun provideUserInfoDataStore(@ApplicationContext context: Context) : DataStore<UserInfo> {
+    fun provideUserInfoDataStore(@ApplicationContext context: Context): DataStore<UserInfo> {
         return DataStoreFactory.create(
             serializer = UserInfoSerializer,
             produceFile = { context.dataStoreFile(Constants.USER_INFO_FILE) }

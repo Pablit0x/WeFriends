@@ -9,21 +9,21 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val auth: FirebaseAuth): ViewModel() {
+class HomeViewModel @Inject constructor(private val auth: FirebaseAuth) : ViewModel() {
 
 
     private val _isSignOutDialogOpen = MutableStateFlow(false)
     val isSignOutDialogOpen = _isSignOutDialogOpen.asStateFlow()
 
-    fun openSignOutDialog(){
+    fun openSignOutDialog() {
         _isSignOutDialogOpen.update { true }
     }
 
-    fun closeSignOutDialog(){
+    fun closeSignOutDialog() {
         _isSignOutDialogOpen.update { false }
     }
 
-    fun signOut(){
+    fun signOut() {
         auth.signOut()
     }
 

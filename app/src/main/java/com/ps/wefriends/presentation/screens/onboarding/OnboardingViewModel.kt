@@ -9,7 +9,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class OnboardingViewModel @Inject constructor(private val userInfoDataStore: DataStore<UserInfo>) : ViewModel() {
+class OnboardingViewModel @Inject constructor(private val userInfoDataStore: DataStore<UserInfo>) :
+    ViewModel() {
     fun setOnboardingAsCompleted() {
         viewModelScope.launch {
             userInfoDataStore.updateData { userInfo ->
