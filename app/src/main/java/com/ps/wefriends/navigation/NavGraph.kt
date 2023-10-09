@@ -23,6 +23,7 @@ import com.ps.wefriends.presentation.screens.onboarding.OnboardingScreen
 import com.ps.wefriends.presentation.screens.onboarding.OnboardingViewModel
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -45,6 +46,7 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
         val viewModel = hiltViewModel<AuthenticationViewModel>()
         val context = LocalContext.current
         val auth = viewModel.auth
+        val scope = rememberCoroutineScope()
         val oneTapSignInState = rememberOneTapSignInState()
         val messageBarState = rememberMessageBarState()
         val isGuestLoading by viewModel.isGuestLoading.collectAsStateWithLifecycle()
@@ -62,8 +64,11 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
             requireOnboarding = requireOnboarding,
             onGuestSignInClicked = {
                 viewModel.signInAsGuest(onSuccess = {
-                    messageBarState.addSuccess(message = context.getString(R.string.successful_sign_in))
-                    viewModel.setAuthenticated(isAuthenticated = true)
+                    scope.launch {
+                        messageBarState.addSuccess(message = context.getString(R.string.successful_sign_in))
+                        delay(1500)
+                        viewModel.setAuthenticated(isAuthenticated = true)
+                    }
                 }, onError = { exception ->
                     messageBarState.addError(exception)
                 })
