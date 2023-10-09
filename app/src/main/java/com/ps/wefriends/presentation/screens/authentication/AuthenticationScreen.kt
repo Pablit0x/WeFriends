@@ -35,8 +35,8 @@ fun AuthenticationScreen(
 ) {
 
     LaunchedEffect(key1 = isAuthenticated, key2 = requireOnboarding) {
-        if(requireOnboarding != null){
-            if (isAuthenticated && requireOnboarding) {
+        requireOnboarding?.let { isOnboardingRequired ->
+            if (isAuthenticated && isOnboardingRequired) {
                 navigateOnboarding()
             } else if (isAuthenticated) {
                 navigateHome()
@@ -55,19 +55,16 @@ fun AuthenticationScreen(
                     modifier = Modifier.padding(padding)
                 )
             }
-        },
-        modifier = Modifier
+        }, modifier = Modifier
             .statusBarsPadding()
             .background(MaterialTheme.colorScheme.surface)
     )
 
-    OneTapSignInWithGoogle(
-        state = oneTapSignInState,
+    OneTapSignInWithGoogle(state = oneTapSignInState,
         clientId = CLIENT_ID,
         onTokenIdReceived = { tokenId ->
             val credential = GoogleAuthProvider.getCredential(tokenId, null)
-            firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener { result ->
+            firebaseAuth.signInWithCredential(credential).addOnCompleteListener { result ->
                     if (result.isSuccessful) {
                         onSuccessfulFirebaseSignIn(tokenId)
                     } else {
