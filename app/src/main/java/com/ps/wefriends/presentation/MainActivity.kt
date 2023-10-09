@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
 }
 
 private fun getStartDestination(auth: FirebaseAuth): String {
-    return if (auth.currentUser != null) Screen.Onboarding.route else Screen.Authentication.route
+    return if (auth.currentUser != null) Screen.Home.route else Screen.Authentication.route
 }
 
 private fun setupTimber() {

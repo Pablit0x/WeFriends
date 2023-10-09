@@ -45,7 +45,7 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
     composable(route = Screen.Authentication.route) {
         val viewModel = hiltViewModel<AuthenticationViewModel>()
         val context = LocalContext.current
-        val auth = viewModel.auth
+        val auth = viewModel.firebaseAuth
         val scope = rememberCoroutineScope()
         val oneTapSignInState = rememberOneTapSignInState()
         val messageBarState = rememberMessageBarState()
@@ -55,7 +55,7 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
         val requireOnboarding by viewModel.requireOnboarding.collectAsStateWithLifecycle()
 
         AuthenticationScreen(
-            auth = auth,
+            firebaseAuth = auth,
             oneTapSignInState = oneTapSignInState,
             messageBarState = messageBarState,
             isGuestLoading = isGuestLoading,

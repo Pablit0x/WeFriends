@@ -18,13 +18,13 @@ import com.stevdzasan.onetap.OneTapSignInWithGoogle
 
 @Composable
 fun AuthenticationScreen(
-    auth: FirebaseAuth,
+    firebaseAuth: FirebaseAuth,
     oneTapSignInState: OneTapSignInState,
     messageBarState: MessageBarState,
     isGuestLoading: Boolean,
     isGoogleLoading: Boolean,
     isAuthenticated: Boolean,
-    requireOnboarding: Boolean,
+    requireOnboarding: Boolean?,
     onGuestSignInClicked: () -> Unit,
     onGoogleSignInClicked: () -> Unit,
     onSuccessfulFirebaseSignIn: (String) -> Unit,
@@ -35,10 +35,12 @@ fun AuthenticationScreen(
 ) {
 
     LaunchedEffect(key1 = isAuthenticated, key2 = requireOnboarding) {
-        if (isAuthenticated && requireOnboarding) {
-            navigateOnboarding()
-        } else if (isAuthenticated) {
-            navigateHome()
+        if(requireOnboarding != null){
+            if (isAuthenticated && requireOnboarding) {
+                navigateOnboarding()
+            } else if (isAuthenticated) {
+                navigateHome()
+            }
         }
     }
 
@@ -64,7 +66,7 @@ fun AuthenticationScreen(
         clientId = CLIENT_ID,
         onTokenIdReceived = { tokenId ->
             val credential = GoogleAuthProvider.getCredential(tokenId, null)
-            auth.signInWithCredential(credential)
+            firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener { result ->
                     if (result.isSuccessful) {
                         onSuccessfulFirebaseSignIn(tokenId)
