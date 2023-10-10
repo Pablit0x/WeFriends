@@ -45,7 +45,7 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
     composable(route = Screen.Authentication.route) {
         val viewModel = hiltViewModel<AuthenticationViewModel>()
         val context = LocalContext.current
-        val auth = viewModel.firebaseAuth
+        val firebaseAuth = viewModel.firebaseAuth
         val scope = rememberCoroutineScope()
         val oneTapSignInState = rememberOneTapSignInState()
         val messageBarState = rememberMessageBarState()
@@ -55,7 +55,7 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
         val requireOnboarding by viewModel.requireOnboarding.collectAsStateWithLifecycle()
 
         AuthenticationScreen(
-            firebaseAuth = auth,
+            firebaseAuth = firebaseAuth,
             oneTapSignInState = oneTapSignInState,
             messageBarState = messageBarState,
             isGuestLoading = isGuestLoading,
@@ -63,14 +63,17 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
             isAuthenticated = isAuthenticated,
             requireOnboarding = requireOnboarding,
             onGuestSignInClicked = {
+                viewModel.setGuestLoading(isLoading = true)
                 viewModel.signInAsGuest(onSuccess = {
                     scope.launch {
                         messageBarState.addSuccess(message = context.getString(R.string.successful_sign_in))
                         delay(1500)
                         viewModel.setAuthenticated(isAuthenticated = true)
+                        viewModel.setGuestLoading(isLoading = false)
                     }
                 }, onError = { exception ->
                     messageBarState.addError(exception)
+                    viewModel.setGuestLoading(isLoading = false)
                 })
             },
             onGoogleSignInClicked = {

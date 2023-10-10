@@ -30,14 +30,13 @@ fun CustomAlertDialog(
             confirmButton = {
                 Button(onClick = {
                     onConfirmClicked()
-                    onCloseDialog()
                 }) {
                     Text(text = stringResource(id = R.string.confirm))
                 }
             },
             dismissButton = {
                 OutlinedButton(onClick = onCloseDialog) {
-                    Text(text = stringResource(id = R.string.confirm))
+                    Text(text = stringResource(id = R.string.cancel))
                 }
             },
             onDismissRequest = onCloseDialog,

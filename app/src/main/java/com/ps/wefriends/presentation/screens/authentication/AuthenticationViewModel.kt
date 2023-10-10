@@ -49,7 +49,7 @@ class AuthenticationViewModel @Inject constructor(
         _isGoogleLoading.update { isLoading }
     }
 
-    private fun setGuestLoading(isLoading: Boolean) {
+    fun setGuestLoading(isLoading: Boolean) {
         _isGuestLoading.update { isLoading }
     }
 
@@ -58,9 +58,7 @@ class AuthenticationViewModel @Inject constructor(
     }
 
     fun signInAsGuest(onSuccess: () -> Unit, onError: (Exception) -> Unit) {
-        setGuestLoading(isLoading = true)
         firebaseAuth.signInAnonymously().addOnCompleteListener { result ->
-            setGuestLoading(isLoading = false)
             if (result.isSuccessful) {
                 onSuccess()
             } else {

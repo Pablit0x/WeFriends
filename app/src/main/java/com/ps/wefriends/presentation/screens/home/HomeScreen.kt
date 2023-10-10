@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerState
@@ -30,7 +31,6 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     drawerState: DrawerState, onOpenDrawerIconClicked: () -> Unit, onSignOutClicked: () -> Unit
 ) {
-
     NavigationDrawer(drawerState = drawerState,
         onAccountClicked = {},
         onFriendsClicked = {},
@@ -38,6 +38,11 @@ fun HomeScreen(
         onSignOutClicked = onSignOutClicked) {
         Scaffold(topBar = {
             CenterAlignedTopAppBar(title = { Text(text = stringResource(id = R.string.app_name)) },
+                actions = {
+                  IconButton(onClick = { /*TODO*/ }) {
+                      Icon(imageVector = Icons.Default.FilterList, contentDescription = "Filter Results")
+                  }
+                },
                 navigationIcon = {
                     IconButton(onClick = onOpenDrawerIconClicked) {
                         Icon(
