@@ -1,6 +1,5 @@
 package com.ps.wefriends.presentation.screens.authentication
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,8 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ps.wefriends.R
+import com.ps.wefriends.presentation.components.AnimatedBorderCard
 
 @Composable
 fun AuthenticationContent(
@@ -42,26 +44,31 @@ fun AuthenticationContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
+            AnimatedBorderCard(
                 modifier = Modifier.weight(10f),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                shape = RoundedCornerShape(15)
             ) {
-                Image(
-                    modifier = Modifier.size(120.dp),
-                    painter = painterResource(id = R.drawable.google_logo),
-                    contentDescription = stringResource(id = R.string.login_provider_logo)
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-                Text(
-                    text = stringResource(id = R.string.welcome_back),
-                    fontSize = MaterialTheme.typography.titleLarge.fontSize
-                )
-                Text(
-                    text = stringResource(id = R.string.please_sign_in_to_continue),
-                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.40f)
-                )
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        modifier = Modifier.size(140.dp),
+                        painter = painterResource(id = R.drawable.app_logo),
+                        contentDescription = stringResource(id = R.string.app_name),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        text = stringResource(id = R.string.welcome_back),
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize
+                    )
+                    Text(
+                        text = stringResource(id = R.string.please_sign_in_to_continue),
+                        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.40f)
+                    )
+                }
             }
             Column(
                 modifier = Modifier.weight(3f), verticalArrangement = Arrangement.Bottom
