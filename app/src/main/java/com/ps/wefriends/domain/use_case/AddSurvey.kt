@@ -4,10 +4,10 @@ import com.ps.wefriends.domain.repository.SurveysRepository
 
 class AddSurvey(
     private val repo: SurveysRepository) {
-    operator fun invoke(
+    suspend operator fun invoke(
         title: String,
-        imageUri: String? = null,
+        imageUrl: String? = null,
         surveyType: String,
         genderAudience: String
-    ) = repo.addSurvey(title = title, imageUri = imageUri, surveyType = surveyType, genderAudience = genderAudience)
+    ) = repo.addSurvey(title = title, imageUrl = imageUrl, surveyType = surveyType, genderAudience = genderAudience)
 }
