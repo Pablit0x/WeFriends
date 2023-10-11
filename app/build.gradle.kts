@@ -99,6 +99,9 @@ dependencies {
     // Firebase Authentication
     implementation(libs.firebase.auth.ktx)
 
+    // Firebase Firestore
+    implementation(libs.firebase.firestore)
+
     // Timber - Logger
     implementation(libs.timber)
 

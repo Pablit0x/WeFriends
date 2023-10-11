@@ -47,6 +47,7 @@ splashScreen = { group = "androidx.core", name = "core-splashscreen", version.re
 compose-googleFonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts" }
 compose-extendedIcons = { group = "androidx.compose.material", name = "material-icons-extended" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+firebase-firestore = {group = "com.google.firebase", name = "firebase-firestore-ktx"}
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 auth-one-tap = { group = "com.github.stevdza-san", name = "OneTapCompose", version.ref = "auth-one-tap" }
