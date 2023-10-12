@@ -112,29 +112,31 @@ fun NavGraphBuilder.onboardingScreen(navigateHome: () -> Unit) {
 fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit) {
     composable(route = Screen.Home.route) {
         val viewModel = hiltViewModel<HomeViewModel>()
-        val isSignOutDialogOpen by viewModel.isSignOutDialogOpen.collectAsStateWithLifecycle()
-        val surveys by viewModel.surveysResponse.collectAsStateWithLifecycle()
+        val state by viewModel.state.collectAsStateWithLifecycle()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
 
-        HomeScreen(surveysResponse = surveys, drawerState = drawerState, onOpenDrawerIconClicked = {
+        HomeScreen(state = state, drawerState = drawerState, onOpenDrawerIconClicked = {
             scope.launch {
                 drawerState.open()
             }
         }, onSignOutClicked = {
             viewModel.openSignOutDialog()
         }, addSurveyClicked = {
-            viewModel.addSurvey(
-                title = "TEST",
-                imageUrl = null,
-                surveyType = SurveyType.FORM,
-                genderAudience = GenderAudience.MALE
-            )
+            if (state.currentUser != null) {
+                viewModel.addSurvey(
+                    ownerId = state.currentUser!!.uid,
+                    title = "TEST",
+                    imageUrl = null,
+                    surveyType = SurveyType.FORM,
+                    genderAudience = GenderAudience.MALE
+                )
+            }
         })
 
         CustomAlertDialog(title = stringResource(id = R.string.sign_out),
             message = stringResource(id = R.string.sign_out_message),
-            isOpen = isSignOutDialogOpen,
+            isOpen = state.isSignOutDialogOpen,
             onCloseDialog = { viewModel.closeSignOutDialog() },
             onConfirmClicked = {
                 viewModel.signOut()

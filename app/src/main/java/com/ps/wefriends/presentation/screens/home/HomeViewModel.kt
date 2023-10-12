@@ -11,7 +11,6 @@ import com.ps.wefriends.domain.use_case.SurveyUseCases
 import com.ps.wefriends.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -20,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val auth: FirebaseAuth, private val surveyUseCases: SurveyUseCases
+    val auth: FirebaseAuth, private val surveyUseCases: SurveyUseCases
 ) : ViewModel() {
 
 
@@ -30,34 +29,101 @@ class HomeViewModel @Inject constructor(
     private val _addSurveyResponse = MutableStateFlow<AddSurveyResponse>(Response.Success(false))
     val addSurveyResponse = _addSurveyResponse.asStateFlow()
 
-
-    private val _isSignOutDialogOpen = MutableStateFlow(false)
-    val isSignOutDialogOpen = _isSignOutDialogOpen.asStateFlow()
+    private val _state = MutableStateFlow(HomeUiState())
+    val state = _state.asStateFlow()
 
     init {
         getSurveys()
+        setUser()
     }
 
     fun openSignOutDialog() {
-        _isSignOutDialogOpen.update { true }
+        _state.update {
+            it.copy(
+                isSignOutDialogOpen = true
+            )
+        }
     }
 
     fun closeSignOutDialog() {
-        _isSignOutDialogOpen.update { false }
+        _state.update {
+            it.copy(
+                isSignOutDialogOpen = false
+            )
+        }
+    }
+
+    fun openSearchField() {
+        _state.update {
+            it.copy(
+                isSearchActive = true
+            )
+        }
+    }
+
+    fun closeSearchField() {
+        _state.update {
+            it.copy(
+                isSearchActive = false
+            )
+        }
+    }
+
+
+    fun openFilterView() {
+        _state.update {
+            it.copy(
+                isFilterActive = true
+            )
+        }
+    }
+
+    fun closeFilterView() {
+        _state.update {
+            it.copy(
+                isFilterActive = false
+            )
+        }
     }
 
     fun signOut() {
         auth.signOut()
     }
 
+    private fun setUser() {
+        _state.update {
+            it.copy(
+                currentUser = auth.currentUser
+            )
+        }
+    }
+
     private fun getSurveys() = viewModelScope.launch {
         surveyUseCases.getSurveys().collect { response ->
-            delay(5000)
-            _surveysResponse.update { response }
+
+            when (response) {
+                Response.Loading -> _state.update { it.copy(isLoading = true) }
+                is Response.Success -> {
+                    _state.update {
+                        it.copy(
+                            surveys = response.data, isLoading = false
+                        )
+                    }
+                }
+
+                is Response.Failure -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = false, error = response.e
+                        )
+                    }
+                }
+            }
         }
     }
 
     fun addSurvey(
+        ownerId: String,
         title: String,
         imageUrl: String? = null,
         surveyType: SurveyType,
@@ -66,7 +132,7 @@ class HomeViewModel @Inject constructor(
         _addSurveyResponse.update { Response.Loading }
         viewModelScope.launch(Dispatchers.IO) {
             surveyUseCases.addSurvey(
-                ownerId = "1234",
+                ownerId = ownerId,
                 title = title,
                 imageUrl = imageUrl,
                 surveyType = surveyType.value,
