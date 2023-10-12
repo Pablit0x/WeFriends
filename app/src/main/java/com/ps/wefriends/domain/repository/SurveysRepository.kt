@@ -7,9 +7,16 @@ import kotlinx.coroutines.flow.Flow
 typealias Surveys = List<Survey>
 typealias SurveysResponse = Response<Surveys>
 typealias AddSurveyResponse = Response<Boolean>
+
 interface SurveysRepository {
-    fun getSurveys() : Flow<SurveysResponse>
+    fun getSurveys(): Flow<SurveysResponse>
 
     // FIXME: For testing only...
-    suspend fun addSurvey(title: String, imageUrl : String?, surveyType: String, genderAudience: String) : AddSurveyResponse
+    suspend fun addSurvey(
+        title: String,
+        ownerId: String,
+        imageUrl: String?,
+        surveyType: String,
+        genderAudience: String
+    ): AddSurveyResponse
 }

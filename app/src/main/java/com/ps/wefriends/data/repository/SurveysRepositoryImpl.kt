@@ -29,11 +29,12 @@ class SurveysRepositoryImpl(
     }
 
     override suspend fun addSurvey(
-        title: String, imageUrl: String?, surveyType: String, genderAudience: String
+        title: String, ownerId: String, imageUrl: String?, surveyType: String, genderAudience: String
     ) = try {
         val id = surveysCollectionRef.document().id
         val survey = Survey(
             id = id,
+            ownerId = ownerId,
             title = title,
             imageUrl = imageUrl,
             surveyType = surveyType,

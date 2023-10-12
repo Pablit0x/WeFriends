@@ -11,6 +11,7 @@ import com.ps.wefriends.domain.use_case.SurveyUseCases
 import com.ps.wefriends.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -33,6 +34,10 @@ class HomeViewModel @Inject constructor(
     private val _isSignOutDialogOpen = MutableStateFlow(false)
     val isSignOutDialogOpen = _isSignOutDialogOpen.asStateFlow()
 
+    init {
+        getSurveys()
+    }
+
     fun openSignOutDialog() {
         _isSignOutDialogOpen.update { true }
     }
@@ -45,6 +50,13 @@ class HomeViewModel @Inject constructor(
         auth.signOut()
     }
 
+    private fun getSurveys() = viewModelScope.launch {
+        surveyUseCases.getSurveys().collect { response ->
+            delay(5000)
+            _surveysResponse.update { response }
+        }
+    }
+
     fun addSurvey(
         title: String,
         imageUrl: String? = null,
@@ -54,6 +66,7 @@ class HomeViewModel @Inject constructor(
         _addSurveyResponse.update { Response.Loading }
         viewModelScope.launch(Dispatchers.IO) {
             surveyUseCases.addSurvey(
+                ownerId = "1234",
                 title = title,
                 imageUrl = imageUrl,
                 surveyType = surveyType.value,

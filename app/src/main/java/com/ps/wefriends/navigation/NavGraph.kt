@@ -14,6 +14,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.ps.wefriends.R
+import com.ps.wefriends.domain.model.GenderAudience
+import com.ps.wefriends.domain.model.SurveyType
 import com.ps.wefriends.presentation.components.CustomAlertDialog
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationScreen
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationViewModel
@@ -111,15 +113,23 @@ fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit) {
     composable(route = Screen.Home.route) {
         val viewModel = hiltViewModel<HomeViewModel>()
         val isSignOutDialogOpen by viewModel.isSignOutDialogOpen.collectAsStateWithLifecycle()
+        val surveys by viewModel.surveysResponse.collectAsStateWithLifecycle()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
 
-        HomeScreen(drawerState = drawerState, onOpenDrawerIconClicked = {
+        HomeScreen(surveysResponse = surveys, drawerState = drawerState, onOpenDrawerIconClicked = {
             scope.launch {
                 drawerState.open()
             }
         }, onSignOutClicked = {
             viewModel.openSignOutDialog()
+        }, addSurveyClicked = {
+            viewModel.addSurvey(
+                title = "TEST",
+                imageUrl = null,
+                surveyType = SurveyType.FORM,
+                genderAudience = GenderAudience.MALE
+            )
         })
 
         CustomAlertDialog(title = stringResource(id = R.string.sign_out),
