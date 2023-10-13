@@ -115,7 +115,10 @@ fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit) {
                 drawerState.open()
             }
         }, onSignOutClicked = {
-            viewModel.openSignOutDialog()
+            scope.launch {
+                drawerState.close()
+                viewModel.openSignOutDialog()
+            }
         }, addSurveyClicked = {
             if (state.currentUser != null) {
                 viewModel.addSurvey(
@@ -131,7 +134,12 @@ fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit) {
         CustomAlertDialog(title = stringResource(id = R.string.sign_out),
             message = stringResource(id = R.string.sign_out_message),
             isOpen = state.isSignOutDialogOpen,
-            onCloseDialog = { viewModel.closeSignOutDialog() },
+            onCloseDialog = {
+                scope.launch {
+                    drawerState.open()
+                    viewModel.closeSignOutDialog()
+                }
+            },
             onConfirmClicked = {
                 viewModel.signOut()
                 navigateAuth()
