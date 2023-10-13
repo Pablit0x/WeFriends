@@ -14,11 +14,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.ps.wefriends.R
-import com.ps.wefriends.domain.model.GenderAudience
-import com.ps.wefriends.domain.model.SurveyType
 import com.ps.wefriends.presentation.components.CustomAlertDialog
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationScreen
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationViewModel
+import com.ps.wefriends.presentation.screens.create_survey.CreateSurveyScreen
+import com.ps.wefriends.presentation.screens.create_survey.CreateSurveyViewModel
 import com.ps.wefriends.presentation.screens.home.HomeScreen
 import com.ps.wefriends.presentation.screens.home.HomeViewModel
 import com.ps.wefriends.presentation.screens.onboarding.OnboardingScreen
@@ -39,7 +39,10 @@ fun NavGraph(startDestinationRoute: String, navController: NavHostController) {
         })
         homeScreen(navigateAuth = {
             navController.navigate(Screen.Authentication.route)
+        }, navigateCreateSurvey = {
+            navController.navigate(Screen.CreateSurvey.route)
         })
+        createSurveyScreen()
     }
 }
 
@@ -103,7 +106,7 @@ fun NavGraphBuilder.onboardingScreen(navigateHome: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit) {
+fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit, navigateCreateSurvey: () -> Unit) {
     composable(route = Screen.Home.route) {
         val viewModel = hiltViewModel<HomeViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -119,17 +122,7 @@ fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit) {
                 drawerState.close()
                 viewModel.openSignOutDialog()
             }
-        }, addSurveyClicked = {
-            if (state.currentUser != null) {
-                viewModel.addSurvey(
-                    ownerId = state.currentUser!!.uid,
-                    title = "TEST",
-                    imageUrl = null,
-                    surveyType = SurveyType.FORM,
-                    genderAudience = GenderAudience.MALE
-                )
-            }
-        })
+        }, addSurveyClicked = navigateCreateSurvey)
 
         CustomAlertDialog(title = stringResource(id = R.string.sign_out),
             message = stringResource(id = R.string.sign_out_message),
@@ -144,5 +137,18 @@ fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit) {
                 viewModel.signOut()
                 navigateAuth()
             })
+    }
+}
+
+fun NavGraphBuilder.createSurveyScreen() {
+    composable(route = Screen.CreateSurvey.route) {
+        val viewModel = hiltViewModel<CreateSurveyViewModel>()
+        val state by viewModel.state.collectAsStateWithLifecycle()
+
+        CreateSurveyScreen(
+            state = state,
+            onAddSurveyClicked = viewModel::addSurvey,
+            onTitleChanged = viewModel::onTitleTextChanged
+        )
     }
 }

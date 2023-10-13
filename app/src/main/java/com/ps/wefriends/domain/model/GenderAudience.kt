@@ -1,7 +1,7 @@
 package com.ps.wefriends.domain.model
 
 enum class GenderAudience(val value: String) {
-    MALE("MALE"), FEMALE("FEMALE"), ANY("ANY")
+    MALE(value = "MALE"), FEMALE(value = "FEMALE"), ANY(value = "ANY")
 }
 fun String.toGenderAudience() : GenderAudience{
     return when (this.uppercase()) {

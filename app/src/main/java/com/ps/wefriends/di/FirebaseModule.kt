@@ -9,7 +9,6 @@ import com.ps.wefriends.data.repository.SurveysRepositoryImpl
 import com.ps.wefriends.domain.repository.SurveysRepository
 import com.ps.wefriends.domain.use_case.AddSurvey
 import com.ps.wefriends.domain.use_case.GetSurveys
-import com.ps.wefriends.domain.use_case.SurveyUseCases
 import com.ps.wefriends.util.Constants.SURVEYS
 import dagger.Module
 import dagger.Provides
@@ -32,16 +31,22 @@ object FirebaseModule {
 
 
     @Provides
+    @Singleton
     fun provideBooksRepository(
         surveysRef: CollectionReference
     ): SurveysRepository = SurveysRepositoryImpl(surveysRef)
 
     @Provides
-    fun provideUseCases(
+    @Singleton
+    fun provideGetSurveysUseCase(
         repo: SurveysRepository
-    ) = SurveyUseCases(
-        getSurveys = GetSurveys(repo),
-        addSurvey = AddSurvey(repo)
-    )
+    ) = GetSurveys(repo)
+
+    @Provides
+    @Singleton
+    fun provideAddSurveyUseCase(
+        repo: SurveysRepository
+    ) = AddSurvey(repo)
+
 
 }

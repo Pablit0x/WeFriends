@@ -3,14 +3,11 @@ package com.ps.wefriends.presentation.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.ps.wefriends.domain.model.GenderAudience
-import com.ps.wefriends.domain.model.SurveyType
 import com.ps.wefriends.domain.repository.AddSurveyResponse
 import com.ps.wefriends.domain.repository.SurveysResponse
-import com.ps.wefriends.domain.use_case.SurveyUseCases
+import com.ps.wefriends.domain.use_case.GetSurveys
 import com.ps.wefriends.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -19,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    val auth: FirebaseAuth, private val surveyUseCases: SurveyUseCases
+    val auth: FirebaseAuth, private val getSurveys: GetSurveys
 ) : ViewModel() {
 
 
@@ -99,8 +96,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getSurveys() = viewModelScope.launch {
-        surveyUseCases.getSurveys().collect { response ->
-
+        getSurveys.invoke().collect { response ->
             when (response) {
                 Response.Loading -> _state.update { it.copy(isLoading = true) }
                 is Response.Success -> {
@@ -121,24 +117,4 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
-    fun addSurvey(
-        ownerId: String,
-        title: String,
-        imageUrl: String? = null,
-        surveyType: SurveyType,
-        genderAudience: GenderAudience
-    ) {
-        _addSurveyResponse.update { Response.Loading }
-        viewModelScope.launch(Dispatchers.IO) {
-            surveyUseCases.addSurvey(
-                ownerId = ownerId,
-                title = title,
-                imageUrl = imageUrl,
-                surveyType = surveyType.value,
-                genderAudience = genderAudience.value
-            )
-        }
-    }
-
 }
