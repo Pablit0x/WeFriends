@@ -18,13 +18,10 @@ import com.stevdzasan.onetap.OneTapSignInWithGoogle
 
 @Composable
 fun AuthenticationScreen(
+    state : AuthenticationUiState,
     firebaseAuth: FirebaseAuth,
     oneTapSignInState: OneTapSignInState,
     messageBarState: MessageBarState,
-    isGuestLoading: Boolean,
-    isGoogleLoading: Boolean,
-    isAuthenticated: Boolean,
-    requireOnboarding: Boolean?,
     onGuestSignInClicked: () -> Unit,
     onGoogleSignInClicked: () -> Unit,
     onSuccessfulFirebaseSignIn: (String) -> Unit,
@@ -34,22 +31,20 @@ fun AuthenticationScreen(
     navigateOnboarding: () -> Unit
 ) {
 
-    LaunchedEffect(key1 = isAuthenticated, key2 = requireOnboarding) {
-        requireOnboarding?.let { isOnboardingRequired ->
-            if (isAuthenticated && isOnboardingRequired) {
+    LaunchedEffect(key1 = state.isAuthenticated, key2 = state.isOnboardingRequired) {
+            if (state.isAuthenticated && state.isOnboardingRequired) {
                 navigateOnboarding()
-            } else if (isAuthenticated) {
+            } else if (state.isAuthenticated) {
                 navigateHome()
             }
-        }
     }
 
     Scaffold(
         content = { padding ->
             ContentWithMessageBar(messageBarState = messageBarState) {
                 AuthenticationContent(
-                    isGuestLoading = isGuestLoading,
-                    isGoogleLoading = isGoogleLoading,
+                    isGuestLoading = state.isGuestLoading,
+                    isGoogleLoading = state.isGoogleLoading,
                     onGuestSignInClicked = onGuestSignInClicked,
                     onGoogleSignInClicked = onGoogleSignInClicked,
                     modifier = Modifier.padding(padding)

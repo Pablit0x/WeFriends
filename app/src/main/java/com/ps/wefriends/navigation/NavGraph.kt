@@ -51,19 +51,13 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
         val scope = rememberCoroutineScope()
         val oneTapSignInState = rememberOneTapSignInState()
         val messageBarState = rememberMessageBarState()
-        val isGuestLoading by viewModel.isGuestLoading.collectAsStateWithLifecycle()
-        val isGoogleLoading by viewModel.isGoogleLoading.collectAsStateWithLifecycle()
-        val isAuthenticated by viewModel.isAuthenticated.collectAsStateWithLifecycle()
-        val requireOnboarding by viewModel.requireOnboarding.collectAsStateWithLifecycle()
+        val state by viewModel.state.collectAsStateWithLifecycle()
 
         AuthenticationScreen(
+            state = state,
             firebaseAuth = firebaseAuth,
             oneTapSignInState = oneTapSignInState,
             messageBarState = messageBarState,
-            isGuestLoading = isGuestLoading,
-            isGoogleLoading = isGoogleLoading,
-            isAuthenticated = isAuthenticated,
-            requireOnboarding = requireOnboarding,
             onGuestSignInClicked = {
                 viewModel.setGuestLoading(isLoading = true)
                 viewModel.signInAsGuest(onSuccess = {
