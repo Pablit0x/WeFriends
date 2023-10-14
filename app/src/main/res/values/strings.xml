@@ -20,9 +20,9 @@
     <string name="cancel">Cancel</string>
     <string name="try_again">Try Again</string>
     <string name="no_surveys">No Surveys</string>
+    <string name="create_survet_screen_title">Create Survey</string>
     <string name="nothing_to_display">Nothing to display…</string>
     <string name="unknown_error_occurred">Ops… Something went wrong!</string>
-
     <string name="sign_out_message">Are you sure you want to sign out?</string>
 
 

@@ -42,7 +42,9 @@ fun NavGraph(startDestinationRoute: String, navController: NavHostController) {
         }, navigateCreateSurvey = {
             navController.navigate(Screen.CreateSurvey.route)
         })
-        createSurveyScreen()
+        createSurveyScreen(navigateHome = {
+            navController.navigate(Screen.Home.route)
+        })
     }
 }
 
@@ -140,7 +142,7 @@ fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit, navigateCreateSurvey: (
     }
 }
 
-fun NavGraphBuilder.createSurveyScreen() {
+fun NavGraphBuilder.createSurveyScreen(navigateHome: () -> Unit) {
     composable(route = Screen.CreateSurvey.route) {
         val viewModel = hiltViewModel<CreateSurveyViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -148,7 +150,8 @@ fun NavGraphBuilder.createSurveyScreen() {
         CreateSurveyScreen(
             state = state,
             onAddSurveyClicked = viewModel::addSurvey,
-            onTitleChanged = viewModel::onTitleTextChanged
+            onTitleChanged = viewModel::onTitleTextChanged,
+            navigateHome = navigateHome
         )
     }
 }
