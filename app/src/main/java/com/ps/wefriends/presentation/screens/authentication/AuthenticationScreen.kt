@@ -18,7 +18,7 @@ import com.stevdzasan.onetap.OneTapSignInWithGoogle
 
 @Composable
 fun AuthenticationScreen(
-    state : AuthenticationUiState,
+    state : AuthenticationState,
     firebaseAuth: FirebaseAuth,
     oneTapSignInState: OneTapSignInState,
     messageBarState: MessageBarState,

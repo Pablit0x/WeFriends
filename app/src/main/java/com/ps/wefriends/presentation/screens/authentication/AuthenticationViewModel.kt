@@ -7,9 +7,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.ps.wefriends.domain.model.UserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,62 +22,100 @@ class AuthenticationViewModel @Inject constructor(
     val firebaseAuth: FirebaseAuth, private val userInfo: DataStore<UserInfo>
 ) : ViewModel() {
 
-    private var _state = MutableStateFlow(AuthenticationUiState())
+    private val _state = MutableStateFlow(AuthenticationState())
     val state = _state.asStateFlow()
 
-//    private var _isGoogleLoading = MutableStateFlow(false)
-//    val isGoogleLoading = _isGoogleLoading.asStateFlow()
-//
-//    private var _isGuestLoading = MutableStateFlow(false)
-//    val isGuestLoading = _isGuestLoading.asStateFlow()
-//
-//    private var _isAuthenticated = MutableStateFlow(false)
-//    val isAuthenticated = _isAuthenticated.asStateFlow()
-//
-//    private var _requireOnboarding = MutableStateFlow<Boolean?>(null)
-//    val requireOnboarding = _requireOnboarding.asStateFlow()
+    private val _effect = MutableSharedFlow<AuthenticationEffect>()
+    var effect = _effect.asSharedFlow()
 
-    init {
-        setRequiredOnboarding()
-    }
 
-    private fun setRequiredOnboarding() {
-        viewModelScope.launch(Dispatchers.IO) {
-            userInfo.data.collectLatest { info ->
+    fun onEvent(event: AuthenticationEvent) {
+        when (event) {
+            is AuthenticationEvent.OnAuthenticationChange -> {
                 _state.update {
                     it.copy(
-                        isOnboardingRequired = info.showOnboarding
+                        isAuthenticated = event.isAuthenticated
                     )
                 }
             }
+
+            is AuthenticationEvent.OnGoogleLoadingChange -> {
+                _state.update {
+                    it.copy(
+                        isGoogleLoading = event.isLoading
+                    )
+                }
+            }
+
+            is AuthenticationEvent.OnGuestLoadingChange -> {
+                _state.update {
+                    it.copy(
+                        isGuestLoading = event.isLoading
+                    )
+                }
+            }
+
+            AuthenticationEvent.OnCheckWhetherOnboardingIsRequired -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(
+                            isOnboardingRequired = getIsOnboardingRequiredFromDataStore()
+                        )
+                    }
+                }
+            }
+
+            is AuthenticationEvent.OnSignInAsGuestClicked -> {
+                onEvent(AuthenticationEvent.OnGuestLoadingChange(isLoading = true))
+                signInAsGuest(onSuccess = event.onSuccess, onError = event.onError)
+            }
+
+            AuthenticationEvent.OnNavigateHome -> navigateHome()
+            AuthenticationEvent.OnNavigateOnboarding -> navigateOnboarding()
+            AuthenticationEvent.OnSignInWithGoogle -> onSignInWithGoogle()
+            is AuthenticationEvent.OnShowSuccessMessage -> showSuccessMessage(event.message)
+            is AuthenticationEvent.OnShowErrorMessage -> showErrorMessage(event.exception)
         }
     }
 
-    fun setGoogleLoading(isLoading: Boolean) {
-        _state.update {
-            it.copy(
-                isGoogleLoading = isLoading
-            )
+    private fun onSignInWithGoogle() {
+        viewModelScope.launch {
+            _effect.emit(AuthenticationEffect.OnSignInWithGoogleClicked)
         }
     }
 
-    fun setGuestLoading(isLoading: Boolean) {
-        _state.update {
-            it.copy(
-                isGuestLoading = isLoading
-            )
+    private fun showErrorMessage(exception: Exception) {
+        viewModelScope.launch {
+            _effect.emit(AuthenticationEffect.OnShowErrorMessage(exception = exception))
         }
     }
 
-    fun setAuthenticated(isAuthenticated: Boolean) {
-        _state.update {
-            it.copy(
-                isAuthenticated = isAuthenticated
-            )
+    private fun showSuccessMessage(successMsg: String) {
+        viewModelScope.launch {
+            _effect.emit(AuthenticationEffect.OnShowSuccessMessage(message = successMsg))
         }
     }
 
-    fun signInAsGuest(onSuccess: () -> Unit, onError: (Exception) -> Unit) {
+    private fun navigateHome() {
+        viewModelScope.launch {
+            _effect.emit(AuthenticationEffect.OnNavigateHome)
+        }
+    }
+
+    private fun navigateOnboarding() {
+        viewModelScope.launch {
+            _effect.emit(AuthenticationEffect.OnNavigateOnboarding)
+        }
+    }
+
+    private suspend fun getIsOnboardingRequiredFromDataStore(): Boolean {
+        val deferredResult = viewModelScope.async(Dispatchers.IO) {
+            userInfo.data.first().showOnboarding
+        }
+        return deferredResult.await()
+    }
+
+    private fun signInAsGuest(onSuccess: () -> Unit, onError: (Exception) -> Unit) {
         firebaseAuth.signInAnonymously().addOnCompleteListener { result ->
             if (result.isSuccessful) {
                 onSuccess()

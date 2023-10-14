@@ -1,4 +1,6 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class
+)
 
 package com.ps.wefriends.navigation
 
@@ -9,7 +11,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -20,6 +21,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.ps.wefriends.R
 import com.ps.wefriends.presentation.components.CustomAlertDialog
+import com.ps.wefriends.presentation.screens.authentication.AuthenticationEffect
+import com.ps.wefriends.presentation.screens.authentication.AuthenticationEvent
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationScreen
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationViewModel
 import com.ps.wefriends.presentation.screens.create_survey.CreateSurveyScreen
@@ -32,8 +35,6 @@ import com.ps.wefriends.presentation.screens.onboarding.OnboardingScreen
 import com.ps.wefriends.presentation.screens.onboarding.OnboardingViewModel
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun NavGraph(startDestinationRoute: String, navController: NavHostController) {
@@ -60,48 +61,91 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
         val viewModel = hiltViewModel<AuthenticationViewModel>()
         val context = LocalContext.current
         val firebaseAuth = viewModel.firebaseAuth
-        val scope = rememberCoroutineScope()
         val oneTapSignInState = rememberOneTapSignInState()
         val messageBarState = rememberMessageBarState()
         val state by viewModel.state.collectAsStateWithLifecycle()
+        val effect by viewModel.effect.collectAsStateWithLifecycle(initialValue = null)
 
-        AuthenticationScreen(
-            state = state,
+        LaunchedEffect(Unit){
+            viewModel.onEvent(AuthenticationEvent.OnCheckWhetherOnboardingIsRequired)
+        }
+
+        LaunchedEffect(effect) {
+            when (effect) {
+                AuthenticationEffect.OnNavigateHome -> navigateHome()
+                AuthenticationEffect.OnNavigateOnboarding -> navigateOnboarding()
+                AuthenticationEffect.OnSignInWithGoogleClicked -> {
+                    oneTapSignInState.open()
+                    viewModel.onEvent(AuthenticationEvent.OnGoogleLoadingChange(isLoading = true))
+                }
+
+                is AuthenticationEffect.OnShowErrorMessage -> {
+                    val exception = (effect as AuthenticationEffect.OnShowErrorMessage).exception
+                    messageBarState.addError(exception = exception)
+                }
+
+                is AuthenticationEffect.OnShowSuccessMessage -> {
+                    val message = (effect as AuthenticationEffect.OnShowSuccessMessage).message
+                    messageBarState.addSuccess(message = message)
+                }
+
+                null -> {}
+            }
+        }
+
+        AuthenticationScreen(state = state,
             firebaseAuth = firebaseAuth,
             oneTapSignInState = oneTapSignInState,
             messageBarState = messageBarState,
             onGuestSignInClicked = {
-                viewModel.setGuestLoading(isLoading = true)
-                viewModel.signInAsGuest(onSuccess = {
-                    scope.launch {
-                        messageBarState.addSuccess(message = context.getString(R.string.successful_sign_in))
-                        delay(1500)
-                        viewModel.setAuthenticated(isAuthenticated = true)
-                        viewModel.setGuestLoading(isLoading = false)
-                    }
-                }, onError = { exception ->
-                    messageBarState.addError(exception)
-                    viewModel.setGuestLoading(isLoading = false)
-                })
+                viewModel.onEvent(AuthenticationEvent.OnGuestLoadingChange(isLoading = true))
+                viewModel.onEvent(AuthenticationEvent.OnSignInAsGuestClicked(onSuccess = {
+                    viewModel.onEvent(
+                        AuthenticationEvent.OnShowSuccessMessage(
+                            message = context.getString(
+                                R.string.successful_sign_in
+                            )
+                        )
+                    )
+                    viewModel.onEvent(AuthenticationEvent.OnAuthenticationChange(isAuthenticated = true))
+                    viewModel.onEvent(AuthenticationEvent.OnGuestLoadingChange(isLoading = false))
+                }, onError = {
+                    viewModel.onEvent(AuthenticationEvent.OnShowErrorMessage(it))
+                    viewModel.onEvent(AuthenticationEvent.OnAuthenticationChange(isAuthenticated = false))
+                }))
             },
             onGoogleSignInClicked = {
-                oneTapSignInState.open()
-                viewModel.setGoogleLoading(isLoading = true)
+                viewModel.onEvent(AuthenticationEvent.OnSignInWithGoogle)
             },
             onSuccessfulFirebaseSignIn = {
-                messageBarState.addSuccess(message = context.getString(R.string.successful_sign_in))
+                viewModel.onEvent(
+                    AuthenticationEvent.OnShowSuccessMessage(
+                        message = context.getString(
+                            R.string.successful_sign_in
+                        )
+                    )
+                )
             },
             onFailedFirebaseSignIn = {
-                messageBarState.addError(it)
-                viewModel.setGoogleLoading(isLoading = false)
+                viewModel.onEvent(AuthenticationEvent.OnShowErrorMessage(exception = it))
+                viewModel.onEvent(AuthenticationEvent.OnGoogleLoadingChange(isLoading = false))
             },
             onDialogDismissed = { errorMsg ->
-                messageBarState.addError(Exception(errorMsg))
-                viewModel.setGoogleLoading(isLoading = false)
+                viewModel.onEvent(
+                    AuthenticationEvent.OnShowErrorMessage(
+                        exception = Exception(
+                            errorMsg
+                        )
+                    )
+                )
+                viewModel.onEvent(AuthenticationEvent.OnGoogleLoadingChange(isLoading = false))
             },
-            navigateHome = navigateHome,
-            navigateOnboarding = navigateOnboarding
-        )
+            navigateHome = {
+                viewModel.onEvent(AuthenticationEvent.OnNavigateHome)
+            },
+            navigateOnboarding = {
+                viewModel.onEvent(AuthenticationEvent.OnNavigateOnboarding)
+            })
     }
 }
 
