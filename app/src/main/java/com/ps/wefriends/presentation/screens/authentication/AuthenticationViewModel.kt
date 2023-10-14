@@ -59,14 +59,13 @@ class AuthenticationViewModel @Inject constructor(
                 viewModelScope.launch {
                     _state.update {
                         it.copy(
-                            isOnboardingRequired = getIsOnboardingRequiredFromDataStore()
+                            isOnboardingRequired = isOnboardingRequired()
                         )
                     }
                 }
             }
 
             is AuthenticationEvent.OnSignInAsGuestClicked -> {
-                onEvent(AuthenticationEvent.OnGuestLoadingChange(isLoading = true))
                 signInAsGuest(onSuccess = event.onSuccess, onError = event.onError)
             }
 
@@ -108,7 +107,7 @@ class AuthenticationViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getIsOnboardingRequiredFromDataStore(): Boolean {
+    private suspend fun isOnboardingRequired(): Boolean {
         val deferredResult = viewModelScope.async(Dispatchers.IO) {
             userInfo.data.first().showOnboarding
         }

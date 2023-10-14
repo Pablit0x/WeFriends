@@ -1,4 +1,6 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
+@file:OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class,
     ExperimentalMaterial3Api::class
 )
 
@@ -66,7 +68,7 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
         val state by viewModel.state.collectAsStateWithLifecycle()
         val effect by viewModel.effect.collectAsStateWithLifecycle(initialValue = null)
 
-        LaunchedEffect(Unit){
+        LaunchedEffect(Unit) {
             viewModel.onEvent(AuthenticationEvent.OnCheckWhetherOnboardingIsRequired)
         }
 
@@ -133,9 +135,7 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
             onDialogDismissed = { errorMsg ->
                 viewModel.onEvent(
                     AuthenticationEvent.OnShowErrorMessage(
-                        exception = Exception(
-                            errorMsg
-                        )
+                        exception = Exception(errorMsg)
                     )
                 )
                 viewModel.onEvent(AuthenticationEvent.OnGoogleLoadingChange(isLoading = false))
@@ -176,12 +176,18 @@ fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit, navigateCreateSurvey: (
             viewModel.onEvent(HomeEvent.OnGetSurveys)
         }
 
+        LaunchedEffect(drawerState.isOpen) {
+            viewModel.onEvent(HomeEvent.OnNavigationDrawerChange(drawerState.isOpen))
+        }
+
         LaunchedEffect(effect) {
             when (effect) {
-                HomeEffect.OnCloseDrawer -> drawerState.close()
                 HomeEffect.OnNavigateAuth -> navigateAuth()
                 HomeEffect.OnNavigateToCreateSurvey -> navigateCreateSurvey()
-                HomeEffect.OnOpenDrawer -> drawerState.open()
+                is HomeEffect.OnNavigationDrawerChange -> {
+                    val isOpen = (effect as HomeEffect.OnNavigationDrawerChange).isOpen
+                    if (isOpen) drawerState.open() else drawerState.close()
+                }
                 else -> {}
             }
         }
@@ -189,36 +195,39 @@ fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit, navigateCreateSurvey: (
         HomeScreen(state = state,
             drawerState = drawerState,
             bottomSheetState = bottomSheetState,
-            onOpenDrawerIconClicked = {
-                viewModel.onEvent(HomeEvent.OnOpenDrawer)
+            onOpenNavigationDrawer = {
+                viewModel.onEvent(HomeEvent.OnNavigationDrawerChange(isOpen = true))
             },
             onSignOutClicked = {
-                viewModel.onEvent(HomeEvent.OnSignOutClicked)
+                viewModel.onEvent(HomeEvent.OnSignOutDialogChange(isOpen = true))
+                viewModel.onEvent(HomeEvent.OnNavigationDrawerChange(isOpen = false))
             },
             addSurveyClicked = {
                 viewModel.onEvent(HomeEvent.OnAddPressed)
             },
             onOpenFilterView = {
-                viewModel.onEvent(HomeEvent.OnOpenFilter)
+                viewModel.onEvent(HomeEvent.OnFilterChange(isOpen = true))
             },
             onCloseFilterView = {
-                viewModel.onEvent(HomeEvent.OnCloseFilter)
+                viewModel.onEvent(HomeEvent.OnFilterChange(isOpen = false))
             },
             onOpenSearchView = {
-                viewModel.onEvent(HomeEvent.OnOpenSearch)
+                viewModel.onEvent(HomeEvent.OnSearchChange(isOpen = true))
             },
             onCloseSearchView = {
-                viewModel.onEvent(HomeEvent.OnCloseSearch)
+                viewModel.onEvent(HomeEvent.OnSearchChange(isOpen = false))
             })
 
         CustomAlertDialog(title = stringResource(id = R.string.sign_out),
             message = stringResource(id = R.string.sign_out_message),
             isOpen = state.isSignOutDialogOpen,
             onCloseDialog = {
-                viewModel.onEvent(HomeEvent.OnSignOutCanceled)
+                viewModel.onEvent(HomeEvent.OnNavigationDrawerChange(isOpen = true))
+                viewModel.onEvent(HomeEvent.OnSignOutDialogChange(isOpen = false))
             },
             onConfirmClicked = {
-                viewModel.onEvent(HomeEvent.OnSignOutConfirmed)
+                viewModel.onEvent(HomeEvent.OnFirebaseSignOut)
+                viewModel.onEvent(HomeEvent.OnNavigateAuth)
             })
     }
 }

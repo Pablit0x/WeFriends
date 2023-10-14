@@ -34,7 +34,7 @@ fun HomeScreen(
     onCloseFilterView: () -> Unit,
     onOpenSearchView: () -> Unit,
     onCloseSearchView: () -> Unit,
-    onOpenDrawerIconClicked: () -> Unit,
+    onOpenNavigationDrawer: () -> Unit,
     onSignOutClicked: () -> Unit,
     addSurveyClicked: () -> Unit
 ) {
@@ -83,7 +83,7 @@ fun HomeScreen(
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = onOpenDrawerIconClicked) {
+                    IconButton(onClick = onOpenNavigationDrawer) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = "Open navigation drawer"

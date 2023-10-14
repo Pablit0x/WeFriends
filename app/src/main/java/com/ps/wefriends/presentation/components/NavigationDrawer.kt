@@ -36,9 +36,9 @@ fun NavigationDrawer(
     onSignOutClicked: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
+    ModalNavigationDrawer(
+        drawerState = drawerState, drawerContent = {
         ModalDrawerSheet {
-
                 AnimatedBorderCard(
                     modifier = Modifier.fillMaxWidth()
                         .height(250.dp)

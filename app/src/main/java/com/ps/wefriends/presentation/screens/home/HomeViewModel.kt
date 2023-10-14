@@ -3,8 +3,7 @@ package com.ps.wefriends.presentation.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.ps.wefriends.domain.repository.AddSurveyResponse
-import com.ps.wefriends.domain.repository.SurveysResponse
+import com.google.firebase.auth.FirebaseUser
 import com.ps.wefriends.domain.use_case.GetSurveys
 import com.ps.wefriends.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,14 +19,6 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     val auth: FirebaseAuth, private val getSurveys: GetSurveys
 ) : ViewModel() {
-
-
-    private val _surveysResponse = MutableStateFlow<SurveysResponse>(Response.Loading)
-    val surveysResponse = _surveysResponse.asStateFlow()
-
-    private val _addSurveyResponse = MutableStateFlow<AddSurveyResponse>(Response.Success(false))
-    val addSurveyResponse = _addSurveyResponse.asStateFlow()
-
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
 
@@ -35,83 +26,52 @@ class HomeViewModel @Inject constructor(
     val effect = _effect.asSharedFlow()
     fun onEvent(event: HomeEvent) {
         when (event) {
-            is HomeEvent.OnSetCurrentUser -> {
-                _state.update {
-                    it.copy(
-                        currentUser = event.currentUser
-                    )
-                }
-            }
-
-            HomeEvent.OnGetSurveys -> {
-                getSurveys()
-            }
-
-            HomeEvent.OnOpenFilter -> {
-                _state.update {
-                    it.copy(
-                        isFilterViewOpen = true
-                    )
-                }
-            }
-
-            HomeEvent.OnCloseFilter -> {
-                _state.update {
-                    it.copy(
-                        isFilterViewOpen = false
-                    )
-                }
-            }
-
-            HomeEvent.OnOpenSearch -> {
-                _state.update {
-                    it.copy(
-                        isSearchViewOpen = true
-                    )
-                }
-            }
-
-            HomeEvent.OnCloseSearch -> {
-                _state.update {
-                    it.copy(
-                        isSearchViewOpen = false
-                    )
-                }
-            }
-
-            HomeEvent.OnOpenDrawer -> onOpenDrawer()
-            HomeEvent.OnCloseDrawer -> onCloseDrawer()
+            is HomeEvent.OnSetCurrentUser -> onSetCurrentUser(currentUser = event.currentUser)
+            is HomeEvent.OnFilterChange -> onFilterChange(isOpen = event.isOpen)
+            is HomeEvent.OnSearchChange -> onSearchChange(isOpen = event.isOpen)
+            is HomeEvent.OnNavigationDrawerChange -> onNavigationDrawerChange(isOpen = event.isOpen)
+            is HomeEvent.OnSignOutDialogChange -> onSignOutDialogChange(isOpen = event.isOpen)
+            HomeEvent.OnGetSurveys -> onGetSurveys()
             HomeEvent.OnAddPressed -> onNavigateToCreateSurvey()
-            HomeEvent.OnSignOutConfirmed -> signOut()
-            HomeEvent.OnCloseSignOutDialog -> {
-                _state.update {
-                    it.copy(
-                        isSignOutDialogOpen = false
-                    )
-                }
-            }
-
-            HomeEvent.OnOpenSignOutDialog -> {
-                _state.update {
-                    it.copy(
-                        isSignOutDialogOpen = true
-                    )
-                }
-            }
-
-            HomeEvent.OnSignOutClicked -> onSignOutButtonClicked()
-            HomeEvent.OnSignOutCanceled -> onSignOutCanceled()
+            HomeEvent.OnFirebaseSignOut -> firebaseSignOut()
+            HomeEvent.OnNavigateAuth -> onNavigateAuth()
         }
     }
 
-    private fun onSignOutButtonClicked() {
-        onEvent(HomeEvent.OnOpenSignOutDialog)
-        onEvent(HomeEvent.OnCloseDrawer)
+    private fun onSetCurrentUser(currentUser : FirebaseUser?){
+        _state.update {
+            it.copy(
+                currentUser = currentUser
+            )
+        }
     }
 
-    private fun onSignOutCanceled() {
-        onEvent(HomeEvent.OnOpenDrawer)
-        onEvent(HomeEvent.OnCloseSignOutDialog)
+    private fun onSignOutDialogChange(isOpen: Boolean){
+        _state.update {
+            it.copy(
+                isSignOutDialogOpen = isOpen
+            )
+        }
+    }
+
+    private fun onSearchChange(isOpen: Boolean){
+        _state.update {
+            it.copy(
+                isSearchViewOpen = isOpen
+            )
+        }
+    }
+
+    private fun onFilterChange(isOpen: Boolean){
+        _state.update {
+            it.copy(
+                isFilterViewOpen = isOpen
+            )
+        }
+    }
+
+    private fun firebaseSignOut(){
+        auth.signOut()
     }
 
     private fun onNavigateToCreateSurvey() {
@@ -120,38 +80,18 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun onOpenDrawer() {
+    private fun onNavigationDrawerChange(isOpen: Boolean) {
         viewModelScope.launch {
-            _effect.emit(HomeEffect.OnOpenDrawer)
+            _effect.emit(HomeEffect.OnNavigationDrawerChange(isOpen = isOpen))
         }
     }
-
-    private fun onCloseDrawer() {
-        viewModelScope.launch {
-            _effect.emit(HomeEffect.OnCloseDrawer)
-        }
-    }
-
     private fun onNavigateAuth() {
         viewModelScope.launch {
             _effect.emit(HomeEffect.OnNavigateAuth)
         }
     }
 
-    private fun signOut() {
-        onNavigateAuth()
-        auth.signOut()
-    }
-
-    private fun setUser() {
-        _state.update {
-            it.copy(
-                currentUser = auth.currentUser
-            )
-        }
-    }
-
-    private fun getSurveys() = viewModelScope.launch {
+    private fun onGetSurveys() = viewModelScope.launch {
         getSurveys.invoke().collect { response ->
             when (response) {
                 Response.Loading -> _state.update { it.copy(isDataLoading = true) }
