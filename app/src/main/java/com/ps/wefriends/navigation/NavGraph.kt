@@ -1,8 +1,13 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.ps.wefriends.navigation
 
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
@@ -19,6 +24,8 @@ import com.ps.wefriends.presentation.screens.authentication.AuthenticationScreen
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationViewModel
 import com.ps.wefriends.presentation.screens.create_survey.CreateSurveyScreen
 import com.ps.wefriends.presentation.screens.create_survey.CreateSurveyViewModel
+import com.ps.wefriends.presentation.screens.home.HomeEffect
+import com.ps.wefriends.presentation.screens.home.HomeEvent
 import com.ps.wefriends.presentation.screens.home.HomeScreen
 import com.ps.wefriends.presentation.screens.home.HomeViewModel
 import com.ps.wefriends.presentation.screens.onboarding.OnboardingScreen
@@ -112,32 +119,62 @@ fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit, navigateCreateSurvey: (
     composable(route = Screen.Home.route) {
         val viewModel = hiltViewModel<HomeViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
+        val currentUser = viewModel.auth.currentUser
+        val effect by viewModel.effect.collectAsStateWithLifecycle(initialValue = null)
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-        val scope = rememberCoroutineScope()
+        val bottomSheetState = rememberModalBottomSheetState()
 
-        HomeScreen(state = state, drawerState = drawerState, onOpenDrawerIconClicked = {
-            scope.launch {
-                drawerState.open()
+        LaunchedEffect(currentUser) {
+            viewModel.onEvent(HomeEvent.OnSetCurrentUser(currentUser = currentUser))
+        }
+
+        LaunchedEffect(Unit) {
+            viewModel.onEvent(HomeEvent.OnGetSurveys)
+        }
+
+        LaunchedEffect(effect) {
+            when (effect) {
+                HomeEffect.OnCloseDrawer -> drawerState.close()
+                HomeEffect.OnNavigateAuth -> navigateAuth()
+                HomeEffect.OnNavigateToCreateSurvey -> navigateCreateSurvey()
+                HomeEffect.OnOpenDrawer -> drawerState.open()
+                else -> {}
             }
-        }, onSignOutClicked = {
-            scope.launch {
-                drawerState.close()
-                viewModel.openSignOutDialog()
-            }
-        }, addSurveyClicked = navigateCreateSurvey)
+        }
+
+        HomeScreen(state = state,
+            drawerState = drawerState,
+            bottomSheetState = bottomSheetState,
+            onOpenDrawerIconClicked = {
+                viewModel.onEvent(HomeEvent.OnOpenDrawer)
+            },
+            onSignOutClicked = {
+                viewModel.onEvent(HomeEvent.OnSignOutClicked)
+            },
+            addSurveyClicked = {
+                viewModel.onEvent(HomeEvent.OnAddPressed)
+            },
+            onOpenFilterView = {
+                viewModel.onEvent(HomeEvent.OnOpenFilter)
+            },
+            onCloseFilterView = {
+                viewModel.onEvent(HomeEvent.OnCloseFilter)
+            },
+            onOpenSearchView = {
+                viewModel.onEvent(HomeEvent.OnOpenSearch)
+            },
+            onCloseSearchView = {
+                viewModel.onEvent(HomeEvent.OnCloseSearch)
+            })
 
         CustomAlertDialog(title = stringResource(id = R.string.sign_out),
             message = stringResource(id = R.string.sign_out_message),
             isOpen = state.isSignOutDialogOpen,
             onCloseDialog = {
-                scope.launch {
-                    drawerState.open()
-                    viewModel.closeSignOutDialog()
-                }
+                viewModel.onEvent(HomeEvent.OnSignOutCanceled)
             },
             onConfirmClicked = {
-                viewModel.signOut()
-                navigateAuth()
+                viewModel.onEvent(HomeEvent.OnSignOutConfirmed)
             })
     }
 }

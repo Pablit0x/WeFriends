@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import com.ps.wefriends.presentation.components.SurveysList
 
 @Composable
-fun HomeContent(state: HomeUiState) {
+fun HomeContent(state: HomeState) {
     SurveysList(
         modifier = Modifier.fillMaxSize(),
         state = state

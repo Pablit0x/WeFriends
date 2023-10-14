@@ -11,16 +11,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ps.wefriends.R
-import com.ps.wefriends.presentation.screens.home.HomeUiState
+import com.ps.wefriends.presentation.screens.home.HomeState
 
 @Composable
 fun SurveysList(
-    state: HomeUiState, modifier: Modifier = Modifier, numOfColumns: Int = 2
+    state: HomeState, modifier: Modifier = Modifier, numOfColumns: Int = 2
 ) {
     val context = LocalContext.current
 
 
-    if (state.surveys.isEmpty() && !state.isLoading) {
+    if (state.surveys.isEmpty() && !state.isDataLoading) {
         EmptySurveyList(title = stringResource(id = R.string.no_surveys),
             description = stringResource(
                 id = R.string.nothing_to_display
@@ -33,7 +33,7 @@ fun SurveysList(
             verticalItemSpacing = 16.dp,
             contentPadding = PaddingValues(16.dp)
         ) {
-            if (state.isLoading) {
+            if (state.isDataLoading) {
                 items(10) {
                     SurveyShimmerItem()
                 }
