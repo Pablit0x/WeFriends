@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.ps.wefriends.domain.model.UserInfo
+import com.ps.wefriends.domain.use_case.SignInAsGuest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -19,7 +20,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
-    val firebaseAuth: FirebaseAuth, private val userInfo: DataStore<UserInfo>
+    val firebaseAuth: FirebaseAuth,
+    private val signInAsGuestUseCase: SignInAsGuest,
+    private val userInfo: DataStore<UserInfo>
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AuthenticationState())
@@ -27,7 +30,6 @@ class AuthenticationViewModel @Inject constructor(
 
     private val _effect = MutableSharedFlow<AuthenticationEffect>()
     var effect = _effect.asSharedFlow()
-
 
     fun onEvent(event: AuthenticationEvent) {
         when (event) {
@@ -64,11 +66,9 @@ class AuthenticationViewModel @Inject constructor(
                     }
                 }
             }
-
-            is AuthenticationEvent.OnSignInAsGuestClicked -> {
-                signInAsGuest(onSuccess = event.onSuccess, onError = event.onError)
-            }
-
+            is AuthenticationEvent.OnSignInAsGuestClicked -> signInAsGuestUseCase.invoke(
+                onSuccess = event.onSuccess, onError = event.onError
+            )
             AuthenticationEvent.OnNavigateHome -> navigateHome()
             AuthenticationEvent.OnNavigateOnboarding -> navigateOnboarding()
             AuthenticationEvent.OnSignInWithGoogle -> onSignInWithGoogle()
@@ -112,15 +112,5 @@ class AuthenticationViewModel @Inject constructor(
             userInfo.data.first().showOnboarding
         }
         return deferredResult.await()
-    }
-
-    private fun signInAsGuest(onSuccess: () -> Unit, onError: (Exception) -> Unit) {
-        firebaseAuth.signInAnonymously().addOnCompleteListener { result ->
-            if (result.isSuccessful) {
-                onSuccess()
-            } else {
-                result.exception?.let { onError(it) }
-            }
-        }
     }
 }

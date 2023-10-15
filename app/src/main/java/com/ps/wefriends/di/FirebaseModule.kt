@@ -9,6 +9,7 @@ import com.ps.wefriends.data.repository.SurveysRepositoryImpl
 import com.ps.wefriends.domain.repository.SurveysRepository
 import com.ps.wefriends.domain.use_case.AddSurvey
 import com.ps.wefriends.domain.use_case.GetSurveys
+import com.ps.wefriends.domain.use_case.SignInAsGuest
 import com.ps.wefriends.util.Constants.SURVEYS
 import dagger.Module
 import dagger.Provides
@@ -49,4 +50,9 @@ object FirebaseModule {
     ) = AddSurvey(repo)
 
 
+    @Provides
+    @Singleton
+    fun provideSignInAsGuest(
+        firebaseAuth: FirebaseAuth
+    ) = SignInAsGuest(firebaseAuth)
 }
