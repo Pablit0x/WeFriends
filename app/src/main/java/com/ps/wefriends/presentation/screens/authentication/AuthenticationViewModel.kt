@@ -21,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
     val firebaseAuth: FirebaseAuth,
+    val authClient: AuthClient,
     private val signInAsGuestUseCase: SignInAsGuest,
     private val userInfo: DataStore<UserInfo>
 ) : ViewModel() {
@@ -66,9 +67,7 @@ class AuthenticationViewModel @Inject constructor(
                     }
                 }
             }
-            is AuthenticationEvent.OnSignInAsGuestClicked -> signInAsGuestUseCase.invoke(
-                onSuccess = event.onSuccess, onError = event.onError
-            )
+            is AuthenticationEvent.OnSignInAsGuestClicked -> signInAsGuestUseCase.invoke(onSuccess = event.onSuccess, onError = event.onError)
             AuthenticationEvent.OnNavigateHome -> navigateHome()
             AuthenticationEvent.OnNavigateOnboarding -> navigateOnboarding()
             AuthenticationEvent.OnSignInWithGoogle -> onSignInWithGoogle()

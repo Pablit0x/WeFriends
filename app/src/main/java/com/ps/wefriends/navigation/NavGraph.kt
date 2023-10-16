@@ -6,6 +6,10 @@
 
 package com.ps.wefriends.navigation
 
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDrawerState
@@ -13,6 +17,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,7 +41,7 @@ import com.ps.wefriends.presentation.screens.home.HomeViewModel
 import com.ps.wefriends.presentation.screens.onboarding.OnboardingScreen
 import com.ps.wefriends.presentation.screens.onboarding.OnboardingViewModel
 import com.stevdzasan.messagebar.rememberMessageBarState
-import com.stevdzasan.onetap.rememberOneTapSignInState
+import kotlinx.coroutines.launch
 
 @Composable
 fun NavGraph(startDestinationRoute: String, navController: NavHostController) {
@@ -62,11 +67,27 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
     composable(route = Screen.Authentication.route) {
         val viewModel = hiltViewModel<AuthenticationViewModel>()
         val context = LocalContext.current
+        val scope = rememberCoroutineScope()
         val firebaseAuth = viewModel.firebaseAuth
-        val oneTapSignInState = rememberOneTapSignInState()
+        val authClient = viewModel.authClient
         val messageBarState = rememberMessageBarState()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val effect by viewModel.effect.collectAsStateWithLifecycle(initialValue = null)
+
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartIntentSenderForResult(),
+            onResult = { result ->
+                if(result.resultCode == ComponentActivity.RESULT_OK) {
+                    scope.launch {
+                        val signInResult = authClient.signInWithIntent(
+                            intent = result.data ?: return@launch
+                        )
+                        viewModel.onEvent(AuthenticationEvent.OnAuthenticationChange(isAuthenticated = true))
+                        viewModel.onEvent(AuthenticationEvent.OnGoogleLoadingChange(isLoading = false))
+                    }
+                }
+            }
+        )
 
         LaunchedEffect(Unit) {
             viewModel.onEvent(AuthenticationEvent.OnCheckWhetherOnboardingIsRequired)
@@ -77,7 +98,14 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
                 AuthenticationEffect.OnNavigateHome -> navigateHome()
                 AuthenticationEffect.OnNavigateOnboarding -> navigateOnboarding()
                 AuthenticationEffect.OnSignInWithGoogleClicked -> {
-                    oneTapSignInState.open()
+                    scope.launch {
+                        val signInIntentSender = authClient.signIn()
+                        launcher.launch(
+                            IntentSenderRequest.Builder(
+                                signInIntentSender ?: return@launch
+                            ).build()
+                        )
+                    }
                     viewModel.onEvent(AuthenticationEvent.OnGoogleLoadingChange(isLoading = true))
                 }
 
@@ -91,13 +119,12 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
                     messageBarState.addSuccess(message = message)
                 }
 
+
                 null -> {}
             }
         }
 
         AuthenticationScreen(state = state,
-            firebaseAuth = firebaseAuth,
-            oneTapSignInState = oneTapSignInState,
             messageBarState = messageBarState,
             onGuestSignInClicked = {
                 viewModel.onEvent(AuthenticationEvent.OnGuestLoadingChange(isLoading = true))
@@ -118,27 +145,6 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
             },
             onGoogleSignInClicked = {
                 viewModel.onEvent(AuthenticationEvent.OnSignInWithGoogle)
-            },
-            onSuccessfulFirebaseSignIn = {
-                viewModel.onEvent(
-                    AuthenticationEvent.OnShowSuccessMessage(
-                        message = context.getString(
-                            R.string.successful_sign_in
-                        )
-                    )
-                )
-            },
-            onFailedFirebaseSignIn = {
-                viewModel.onEvent(AuthenticationEvent.OnShowErrorMessage(exception = it))
-                viewModel.onEvent(AuthenticationEvent.OnGoogleLoadingChange(isLoading = false))
-            },
-            onDialogDismissed = { errorMsg ->
-                viewModel.onEvent(
-                    AuthenticationEvent.OnShowErrorMessage(
-                        exception = Exception(errorMsg)
-                    )
-                )
-                viewModel.onEvent(AuthenticationEvent.OnGoogleLoadingChange(isLoading = false))
             },
             navigateHome = {
                 viewModel.onEvent(AuthenticationEvent.OnNavigateHome)
@@ -188,6 +194,7 @@ fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit, navigateCreateSurvey: (
                     val isOpen = (effect as HomeEffect.OnNavigationDrawerChange).isOpen
                     if (isOpen) drawerState.open() else drawerState.close()
                 }
+
                 else -> {}
             }
         }

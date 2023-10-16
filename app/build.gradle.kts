@@ -120,4 +120,7 @@ dependencies {
 
     // Coil
     implementation(libs.coil)
+
+    // Google Auth
+    implementation(libs.google.auth)
 }
