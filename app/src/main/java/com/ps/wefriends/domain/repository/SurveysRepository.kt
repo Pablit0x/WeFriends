@@ -12,7 +12,7 @@ interface SurveysRepository {
     fun getSurveys(): Flow<SurveysResponse>
 
     // FIXME: For testing only...
-    suspend fun addSurvey(
+    suspend fun createSurvey(
         title: String,
         ownerId: String,
         imageUrl: String?,

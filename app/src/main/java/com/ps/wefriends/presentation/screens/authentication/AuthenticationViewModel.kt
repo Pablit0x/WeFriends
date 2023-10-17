@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
-    val authClient: GoogleAuthClient,
+    val authClient: AuthUiClient,
     private val userInfo: DataStore<UserInfo>
 ) : ViewModel() {
 

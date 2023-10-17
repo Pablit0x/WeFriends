@@ -6,11 +6,12 @@ import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.ps.wefriends.domain.model.UserData
 import com.ps.wefriends.util.Constants
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.cancellation.CancellationException
 
-class GoogleAuthClient(
+class AuthUiClient(
     private val signInClient: SignInClient, private val firebaseAuth: FirebaseAuth
 ) {
 
@@ -64,7 +65,10 @@ class GoogleAuthClient(
 
     fun getSignedInUser(): UserData? = firebaseAuth.currentUser?.run {
         UserData(
-            userId = uid, username = displayName, profilePictureUrl = photoUrl?.toString()
+            userId = uid,
+            isAnonymous = isAnonymous,
+            username = displayName,
+            profilePictureUrl = photoUrl?.toString()
         )
     }
 

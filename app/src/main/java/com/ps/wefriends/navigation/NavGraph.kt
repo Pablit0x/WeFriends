@@ -263,7 +263,7 @@ fun NavGraphBuilder.createSurveyScreen(navigateHome: () -> Unit) {
 
         CreateSurveyScreen(
             state = state,
-            onAddSurveyClicked = viewModel::addSurvey,
+            onAddSurveyClicked = viewModel::createSurvey,
             onTitleChanged = viewModel::onTitleTextChanged,
             navigateHome = navigateHome
         )

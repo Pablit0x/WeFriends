@@ -10,7 +10,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.ps.wefriends.data.repository.SurveysRepositoryImpl
 import com.ps.wefriends.domain.repository.SurveysRepository
-import com.ps.wefriends.presentation.screens.authentication.GoogleAuthClient
+import com.ps.wefriends.presentation.screens.authentication.AuthUiClient
 import com.ps.wefriends.util.Constants.SURVEYS
 import dagger.Module
 import dagger.Provides
@@ -51,8 +51,8 @@ object FirebaseModule {
     @Singleton
     fun provideAuthClient(
         signInClient: SignInClient, firebaseAuth: FirebaseAuth
-    ): GoogleAuthClient {
-        return GoogleAuthClient(signInClient = signInClient, firebaseAuth = firebaseAuth)
+    ): AuthUiClient {
+        return AuthUiClient(signInClient = signInClient, firebaseAuth = firebaseAuth)
     }
 
 }

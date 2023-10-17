@@ -1,6 +1,6 @@
 package com.ps.wefriends.presentation.screens.home
 
-import com.ps.wefriends.presentation.screens.authentication.UserData
+import com.ps.wefriends.domain.model.UserData
 
 sealed class HomeEvent {
     data class OnSetCurrentUser(val userData: UserData?) : HomeEvent()

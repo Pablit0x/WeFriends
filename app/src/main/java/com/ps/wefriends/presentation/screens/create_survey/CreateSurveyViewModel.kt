@@ -2,8 +2,8 @@ package com.ps.wefriends.presentation.screens.create_survey
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
 import com.ps.wefriends.domain.repository.SurveysRepository
+import com.ps.wefriends.presentation.screens.authentication.AuthUiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,13 +14,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateSurveyViewModel @Inject constructor(
-    firebaseAuth: FirebaseAuth, private val repository: SurveysRepository
+    private val authUiClient: AuthUiClient, private val repository: SurveysRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CreateSurveyUiState())
     val state = _state.asStateFlow()
 
-    private val currentUser = firebaseAuth.currentUser
+    fun setUserOwner() {
+        _state.update {
+            it.copy(
+                surveyOwner = authUiClient.getSignedInUser()
+            )
+        }
+    }
 
     fun onTitleTextChanged(text: String) {
         _state.update {
@@ -30,15 +36,15 @@ class CreateSurveyViewModel @Inject constructor(
         }
     }
 
-    fun addSurvey() {
-        if (currentUser != null) {
+    fun createSurvey() {
+        state.value.run {
             viewModelScope.launch(Dispatchers.IO) {
-                repository.addSurvey(
-                    ownerId = currentUser.uid,
-                    title = state.value.title,
-                    imageUrl = state.value.imageUrl,
-                    surveyType = state.value.surveyType.value,
-                    genderAudience = state.value.genderAudience.value
+                repository.createSurvey(
+                    ownerId = surveyOwner!!.userId,
+                    title = title,
+                    imageUrl = imageUrl,
+                    surveyType = surveyType.value,
+                    genderAudience = genderAudience.value
                 )
             }
         }
