@@ -3,9 +3,7 @@ package com.ps.wefriends.presentation.screens.authentication
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
 import com.ps.wefriends.domain.model.UserInfo
-import com.ps.wefriends.domain.use_case.SignInAsGuest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -20,9 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
-    val firebaseAuth: FirebaseAuth,
-    val authClient: AuthClient,
-    private val signInAsGuestUseCase: SignInAsGuest,
+    val authClient: GoogleAuthClient,
     private val userInfo: DataStore<UserInfo>
 ) : ViewModel() {
 
@@ -67,7 +63,7 @@ class AuthenticationViewModel @Inject constructor(
                     }
                 }
             }
-            is AuthenticationEvent.OnSignInAsGuestClicked -> signInAsGuestUseCase.invoke(onSuccess = event.onSuccess, onError = event.onError)
+            is AuthenticationEvent.OnSignInAsGuestClicked -> authClient.anonymousSignIn(onSuccess = event.onSuccess, onError = event.onError)
             AuthenticationEvent.OnNavigateHome -> navigateHome()
             AuthenticationEvent.OnNavigateOnboarding -> navigateOnboarding()
             AuthenticationEvent.OnSignInWithGoogle -> onSignInWithGoogle()

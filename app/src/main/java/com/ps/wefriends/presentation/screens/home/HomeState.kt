@@ -1,10 +1,10 @@
 package com.ps.wefriends.presentation.screens.home
 
-import com.google.firebase.auth.FirebaseUser
 import com.ps.wefriends.domain.model.Survey
+import com.ps.wefriends.presentation.screens.authentication.UserData
 
 data class HomeState(
-    val currentUser: FirebaseUser? = null,
+    val currentUser: UserData? = null,
     val surveys: List<Survey> = emptyList(),
     val isDataLoading: Boolean = true,
     val error: Exception? = null,

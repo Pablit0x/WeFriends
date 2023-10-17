@@ -3,7 +3,7 @@ package com.ps.wefriends.presentation.screens.create_survey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.ps.wefriends.domain.use_case.AddSurvey
+import com.ps.wefriends.domain.repository.SurveysRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,8 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateSurveyViewModel @Inject constructor(
-    firebaseAuth: FirebaseAuth,
-    private val addSurvey: AddSurvey
+    firebaseAuth: FirebaseAuth, private val repository: SurveysRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CreateSurveyUiState())
@@ -32,9 +31,9 @@ class CreateSurveyViewModel @Inject constructor(
     }
 
     fun addSurvey() {
-        if(currentUser != null){
+        if (currentUser != null) {
             viewModelScope.launch(Dispatchers.IO) {
-                addSurvey.invoke(
+                repository.addSurvey(
                     ownerId = currentUser.uid,
                     title = state.value.title,
                     imageUrl = state.value.imageUrl,

@@ -2,11 +2,12 @@ package com.ps.wefriends.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.ps.wefriends.domain.use_case.GetSurveys
+import com.ps.wefriends.domain.repository.SurveysRepository
+import com.ps.wefriends.presentation.screens.authentication.GoogleAuthClient
+import com.ps.wefriends.presentation.screens.authentication.UserData
 import com.ps.wefriends.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    val auth: FirebaseAuth, private val getSurveys: GetSurveys
+    val googleAuthClient: GoogleAuthClient,
+    private val repository: SurveysRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
@@ -26,7 +28,7 @@ class HomeViewModel @Inject constructor(
     val effect = _effect.asSharedFlow()
     fun onEvent(event: HomeEvent) {
         when (event) {
-            is HomeEvent.OnSetCurrentUser -> onSetCurrentUser(currentUser = event.currentUser)
+            is HomeEvent.OnSetCurrentUser -> onSetCurrentUser(currentUser = event.userData)
             is HomeEvent.OnFilterChange -> onFilterChange(isOpen = event.isOpen)
             is HomeEvent.OnSearchChange -> onSearchChange(isOpen = event.isOpen)
             is HomeEvent.OnNavigationDrawerChange -> onNavigationDrawerChange(isOpen = event.isOpen)
@@ -38,7 +40,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun onSetCurrentUser(currentUser : FirebaseUser?){
+    private fun onSetCurrentUser(currentUser: UserData?) {
         _state.update {
             it.copy(
                 currentUser = currentUser
@@ -46,7 +48,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun onSignOutDialogChange(isOpen: Boolean){
+    private fun onSignOutDialogChange(isOpen: Boolean) {
         _state.update {
             it.copy(
                 isSignOutDialogOpen = isOpen
@@ -54,7 +56,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun onSearchChange(isOpen: Boolean){
+    private fun onSearchChange(isOpen: Boolean) {
         _state.update {
             it.copy(
                 isSearchViewOpen = isOpen
@@ -62,7 +64,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun onFilterChange(isOpen: Boolean){
+    private fun onFilterChange(isOpen: Boolean) {
         _state.update {
             it.copy(
                 isFilterViewOpen = isOpen
@@ -70,8 +72,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun firebaseSignOut(){
-        auth.signOut()
+    private fun firebaseSignOut() {
+        viewModelScope.launch(Dispatchers.IO) {
+            googleAuthClient.signOut()
+        }
     }
 
     private fun onNavigateToCreateSurvey() {
@@ -85,6 +89,7 @@ class HomeViewModel @Inject constructor(
             _effect.emit(HomeEffect.OnNavigationDrawerChange(isOpen = isOpen))
         }
     }
+
     private fun onNavigateAuth() {
         viewModelScope.launch {
             _effect.emit(HomeEffect.OnNavigateAuth)
@@ -92,7 +97,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun onGetSurveys() = viewModelScope.launch {
-        getSurveys.invoke().collect { response ->
+        repository.getSurveys().collect { response ->
             when (response) {
                 Response.Loading -> _state.update { it.copy(isDataLoading = true) }
                 is Response.Success -> {
