@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CreateSurveyContent(
-    state: CreateSurveyUiState,
+    state: CreateSurveyState,
     onTitleChanged: (String) -> Unit,
     onAddSurveyClicked: () -> Unit,
     modifier: Modifier = Modifier

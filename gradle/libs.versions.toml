@@ -24,6 +24,7 @@ datastore = "1.0.0"
 kotlinx-serialization = "1.6.0"
 coil-compose = "2.3.0"
 google-auth = "20.4.1"
+hilt-common = "1.0.0"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -59,6 +60,7 @@ datastore = {group = "androidx.datastore", name = "datastore", version.ref = "da
 serialization = {group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref ="kotlinx-serialization"}
 coil = {group = "io.coil-kt", name= "coil-compose", version.ref ="coil-compose"}
 google-auth = {group = "com.google.android.gms", name = "play-services-auth", version.ref = "google-auth"}
+androidx-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hilt-common" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

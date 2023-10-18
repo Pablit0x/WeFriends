@@ -18,7 +18,7 @@ import com.ps.wefriends.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateSurveyScreen(
-    state: CreateSurveyUiState,
+    state: CreateSurveyState,
     onAddSurveyClicked: () -> Unit,
     onTitleChanged: (String) -> Unit,
     navigateHome: () -> Unit

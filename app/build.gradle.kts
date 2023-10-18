@@ -78,6 +78,9 @@ dependencies {
     implementation(libs.hilt.navigation)
     ksp(libs.hilt.compiler)
 
+    // WorkManager Hilt
+    implementation(libs.androidx.hilt.common)
+
     // Lifecycle Aware Flow Collector
     implementation(libs.compose.lifecycle.flow)
 

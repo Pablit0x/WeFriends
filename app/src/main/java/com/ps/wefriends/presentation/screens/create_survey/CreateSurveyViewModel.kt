@@ -17,7 +17,7 @@ class CreateSurveyViewModel @Inject constructor(
     private val authUiClient: AuthUiClient, private val repository: SurveysRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(CreateSurveyUiState())
+    private val _state = MutableStateFlow(CreateSurveyState())
     val state = _state.asStateFlow()
 
     fun setUserOwner() {
