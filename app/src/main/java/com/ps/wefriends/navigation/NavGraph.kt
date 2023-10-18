@@ -17,7 +17,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -64,7 +63,6 @@ fun NavGraph(startDestinationRoute: String, navController: NavHostController) {
 fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboarding: () -> Unit) {
     composable(route = Screen.Authentication.route) {
         val viewModel = hiltViewModel<AuthenticationViewModel>()
-        val context = LocalContext.current
         val authClient = viewModel.authClient
         val messageBarState = rememberMessageBarState()
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -125,18 +123,14 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
                         ).build()
                     )
                 }
-
                 is AuthenticationEffect.OnShowErrorMessage -> {
                     val exception = (effect as AuthenticationEffect.OnShowErrorMessage).exception
                     messageBarState.addError(exception = exception)
                 }
-
                 is AuthenticationEffect.OnShowSuccessMessage -> {
                     val message = (effect as AuthenticationEffect.OnShowSuccessMessage).message
                     messageBarState.addSuccess(message = message)
                 }
-
-
                 null -> {}
             }
         }
@@ -146,13 +140,6 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
             onGuestSignInClicked = {
                 viewModel.onEvent(AuthenticationEvent.OnGuestLoadingChange(isLoading = true))
                 viewModel.onEvent(AuthenticationEvent.OnSignInAsGuestClicked(onSuccess = {
-                    viewModel.onEvent(
-                        AuthenticationEvent.OnShowSuccessMessage(
-                            message = context.getString(
-                                R.string.successful_sign_in
-                            )
-                        )
-                    )
                     viewModel.onEvent(AuthenticationEvent.OnAuthenticationChange(isAuthenticated = true))
                     viewModel.onEvent(AuthenticationEvent.OnGuestLoadingChange(isLoading = false))
                 }, onError = {
@@ -211,8 +198,7 @@ fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit, navigateCreateSurvey: (
                     val isOpen = (effect as HomeEffect.OnNavigationDrawerChange).isOpen
                     if (isOpen) drawerState.open() else drawerState.close()
                 }
-
-                else -> {}
+                null -> {}
             }
         }
 

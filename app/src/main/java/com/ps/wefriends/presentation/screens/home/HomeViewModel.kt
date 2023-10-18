@@ -2,9 +2,9 @@ package com.ps.wefriends.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ps.wefriends.domain.model.UserData
 import com.ps.wefriends.domain.repository.SurveysRepository
 import com.ps.wefriends.presentation.screens.authentication.AuthUiClient
-import com.ps.wefriends.domain.model.UserData
 import com.ps.wefriends.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +21,7 @@ class HomeViewModel @Inject constructor(
     val googleAuthClient: AuthUiClient,
     private val repository: SurveysRepository
 ) : ViewModel() {
+
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
 

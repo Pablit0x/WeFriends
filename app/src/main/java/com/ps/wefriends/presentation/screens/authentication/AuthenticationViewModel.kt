@@ -18,8 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
-    val authClient: AuthUiClient,
-    private val userInfo: DataStore<UserInfo>
+    val authClient: AuthUiClient, private val userInfo: DataStore<UserInfo>
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AuthenticationState())
@@ -30,45 +29,55 @@ class AuthenticationViewModel @Inject constructor(
 
     fun onEvent(event: AuthenticationEvent) {
         when (event) {
-            is AuthenticationEvent.OnAuthenticationChange -> {
-                _state.update {
-                    it.copy(
-                        isAuthenticated = event.isAuthenticated
-                    )
-                }
-            }
+            is AuthenticationEvent.OnAuthenticationChange -> onAuthenticationChange(isAuthenticated = event.isAuthenticated)
+            is AuthenticationEvent.OnGoogleLoadingChange -> onGoogleLoadingChange(isLoading = event.isLoading)
+            is AuthenticationEvent.OnGuestLoadingChange -> onGuestLoadingChange(isLoading = event.isLoading)
+            is AuthenticationEvent.OnSignInAsGuestClicked -> authClient.anonymousSignIn(
+                onSuccess = event.onSuccess, onError = event.onError
+            )
 
-            is AuthenticationEvent.OnGoogleLoadingChange -> {
-                _state.update {
-                    it.copy(
-                        isGoogleLoading = event.isLoading
-                    )
-                }
-            }
-
-            is AuthenticationEvent.OnGuestLoadingChange -> {
-                _state.update {
-                    it.copy(
-                        isGuestLoading = event.isLoading
-                    )
-                }
-            }
-
-            AuthenticationEvent.OnCheckWhetherOnboardingIsRequired -> {
-                viewModelScope.launch {
-                    _state.update {
-                        it.copy(
-                            isOnboardingRequired = isOnboardingRequired()
-                        )
-                    }
-                }
-            }
-            is AuthenticationEvent.OnSignInAsGuestClicked -> authClient.anonymousSignIn(onSuccess = event.onSuccess, onError = event.onError)
+            is AuthenticationEvent.OnShowSuccessMessage -> showSuccessMessage(event.message)
+            is AuthenticationEvent.OnShowErrorMessage -> showErrorMessage(event.exception)
+            AuthenticationEvent.OnCheckWhetherOnboardingIsRequired -> onCheckWhetherOnboardingIsRequired()
             AuthenticationEvent.OnNavigateHome -> navigateHome()
             AuthenticationEvent.OnNavigateOnboarding -> navigateOnboarding()
             AuthenticationEvent.OnSignInWithGoogle -> onSignInWithGoogle()
-            is AuthenticationEvent.OnShowSuccessMessage -> showSuccessMessage(event.message)
-            is AuthenticationEvent.OnShowErrorMessage -> showErrorMessage(event.exception)
+        }
+    }
+
+    private fun onAuthenticationChange(isAuthenticated: Boolean) {
+        _state.update {
+            it.copy(
+                isAuthenticated = isAuthenticated
+            )
+        }
+    }
+
+    private fun onGoogleLoadingChange(isLoading: Boolean) {
+        _state.update {
+            it.copy(
+                isGoogleLoading = isLoading
+            )
+        }
+    }
+
+
+    private fun onGuestLoadingChange(isLoading: Boolean) {
+        _state.update {
+            it.copy(
+                isGuestLoading = isLoading
+            )
+        }
+    }
+
+
+    private fun onCheckWhetherOnboardingIsRequired() {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    isOnboardingRequired = isOnboardingRequired()
+                )
+            }
         }
     }
 
