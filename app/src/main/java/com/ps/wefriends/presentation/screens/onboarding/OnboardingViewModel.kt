@@ -37,7 +37,7 @@ class OnboardingViewModel @Inject constructor(private val userInfoDataStore: Dat
             _effect.emit(OnboardingEffect.OnNavigateAuth)
         }
     }
-    fun setOnboardingAsCompleted() {
+    private fun setOnboardingAsCompleted() {
         viewModelScope.launch {
             userInfoDataStore.updateData { userInfo ->
                 userInfo.copy(
