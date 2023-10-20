@@ -3,7 +3,7 @@ package com.ps.wefriends.presentation.screens.authentication
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ps.wefriends.domain.model.UserInfo
+import com.ps.wefriends.domain.model.UserConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
-    val authClient: AuthUiClient, private val userInfo: DataStore<UserInfo>
+    val authClient: AuthUiClient, private val userInfo: DataStore<UserConfig>
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AuthenticationState())
