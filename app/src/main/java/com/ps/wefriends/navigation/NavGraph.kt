@@ -30,6 +30,8 @@ import com.ps.wefriends.presentation.screens.authentication.AuthenticationEffect
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationEvent
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationScreen
 import com.ps.wefriends.presentation.screens.authentication.AuthenticationViewModel
+import com.ps.wefriends.presentation.screens.create_survey.CreateSurveyEffect
+import com.ps.wefriends.presentation.screens.create_survey.CreateSurveyEvent
 import com.ps.wefriends.presentation.screens.create_survey.CreateSurveyScreen
 import com.ps.wefriends.presentation.screens.create_survey.CreateSurveyViewModel
 import com.ps.wefriends.presentation.screens.home.HomeEffect
@@ -68,46 +70,46 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
         val state by viewModel.state.collectAsStateWithLifecycle()
         val effect by viewModel.effect.collectAsStateWithLifecycle(initialValue = null)
 
-        val launcher =
-            rememberLauncherForActivityResult(contract = ActivityResultContracts.StartIntentSenderForResult(),
-                onResult = { result ->
-                    if (result.resultCode == ComponentActivity.RESULT_OK) {
-                        authClient.googleSignInWithIntent(intent = result.data
-                            ?: return@rememberLauncherForActivityResult,
-                            onSuccess = {
-                                viewModel.onEvent(
-                                    AuthenticationEvent.OnAuthenticationChange(
-                                        isAuthenticated = true
-                                    )
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartIntentSenderForResult(),
+            onResult = { result ->
+                if (result.resultCode == ComponentActivity.RESULT_OK) {
+                    authClient.googleSignInWithIntent(intent = result.data
+                        ?: return@rememberLauncherForActivityResult,
+                        onSuccess = {
+                            viewModel.onEvent(
+                                event = AuthenticationEvent.OnAuthenticationChange(
+                                    isAuthenticated = true
                                 )
-                                viewModel.onEvent(
-                                    AuthenticationEvent.OnGoogleLoadingChange(
-                                        isLoading = false
-                                    )
+                            )
+                            viewModel.onEvent(
+                                event = AuthenticationEvent.OnGoogleLoadingChange(
+                                    isLoading = false
                                 )
-                            },
-                            onError = {
-                                viewModel.onEvent(
-                                    AuthenticationEvent.OnShowErrorMessage(
-                                        exception = it
-                                    )
+                            )
+                        },
+                        onError = {
+                            viewModel.onEvent(
+                                event = AuthenticationEvent.OnShowErrorMessage(
+                                    exception = it
                                 )
-                                viewModel.onEvent(
-                                    AuthenticationEvent.OnAuthenticationChange(
-                                        isAuthenticated = false
-                                    )
+                            )
+                            viewModel.onEvent(
+                                event = AuthenticationEvent.OnAuthenticationChange(
+                                    isAuthenticated = false
                                 )
-                                viewModel.onEvent(
-                                    AuthenticationEvent.OnGoogleLoadingChange(
-                                        isLoading = false
-                                    )
+                            )
+                            viewModel.onEvent(
+                                event = AuthenticationEvent.OnGoogleLoadingChange(
+                                    isLoading = false
                                 )
-                            })
-                    }
-                })
+                            )
+                        })
+                }
+            })
 
         LaunchedEffect(Unit) {
-            viewModel.onEvent(AuthenticationEvent.OnCheckWhetherOnboardingIsRequired)
+            viewModel.onEvent(event = AuthenticationEvent.OnCheckWhetherOnboardingIsRequired)
         }
 
         LaunchedEffect(effect) {
@@ -115,7 +117,7 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
                 AuthenticationEffect.OnNavigateHome -> navigateHome()
                 AuthenticationEffect.OnNavigateOnboarding -> navigateOnboarding()
                 AuthenticationEffect.OnSignInWithGoogleClicked -> {
-                    viewModel.onEvent(AuthenticationEvent.OnGoogleLoadingChange(isLoading = true))
+                    viewModel.onEvent(event = AuthenticationEvent.OnGoogleLoadingChange(isLoading = true))
                     val signInIntentSender = authClient.googleSignIn()
                     launcher.launch(
                         IntentSenderRequest.Builder(
@@ -123,14 +125,17 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
                         ).build()
                     )
                 }
+
                 is AuthenticationEffect.OnShowErrorMessage -> {
                     val exception = (effect as AuthenticationEffect.OnShowErrorMessage).exception
                     messageBarState.addError(exception = exception)
                 }
+
                 is AuthenticationEffect.OnShowSuccessMessage -> {
                     val message = (effect as AuthenticationEffect.OnShowSuccessMessage).message
                     messageBarState.addSuccess(message = message)
                 }
+
                 null -> {}
             }
         }
@@ -138,23 +143,31 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
         AuthenticationScreen(state = state,
             messageBarState = messageBarState,
             onGuestSignInClicked = {
-                viewModel.onEvent(AuthenticationEvent.OnGuestLoadingChange(isLoading = true))
-                viewModel.onEvent(AuthenticationEvent.OnSignInAsGuestClicked(onSuccess = {
-                    viewModel.onEvent(AuthenticationEvent.OnAuthenticationChange(isAuthenticated = true))
-                    viewModel.onEvent(AuthenticationEvent.OnGuestLoadingChange(isLoading = false))
+                viewModel.onEvent(event = AuthenticationEvent.OnGuestLoadingChange(isLoading = true))
+                viewModel.onEvent(event = AuthenticationEvent.OnSignInAsGuestClicked(onSuccess = {
+                    viewModel.onEvent(
+                        event = AuthenticationEvent.OnAuthenticationChange(
+                            isAuthenticated = true
+                        )
+                    )
+                    viewModel.onEvent(event = AuthenticationEvent.OnGuestLoadingChange(isLoading = false))
                 }, onError = {
-                    viewModel.onEvent(AuthenticationEvent.OnShowErrorMessage(it))
-                    viewModel.onEvent(AuthenticationEvent.OnAuthenticationChange(isAuthenticated = false))
+                    viewModel.onEvent(event = AuthenticationEvent.OnShowErrorMessage(it))
+                    viewModel.onEvent(
+                        event = AuthenticationEvent.OnAuthenticationChange(
+                            isAuthenticated = false
+                        )
+                    )
                 }))
             },
             onGoogleSignInClicked = {
-                viewModel.onEvent(AuthenticationEvent.OnSignInWithGoogle)
+                viewModel.onEvent(event = AuthenticationEvent.OnSignInWithGoogle)
             },
             navigateHome = {
-                viewModel.onEvent(AuthenticationEvent.OnNavigateHome)
+                viewModel.onEvent(event = AuthenticationEvent.OnNavigateHome)
             },
             navigateOnboarding = {
-                viewModel.onEvent(AuthenticationEvent.OnNavigateOnboarding)
+                viewModel.onEvent(event = AuthenticationEvent.OnNavigateOnboarding)
             })
     }
 }
@@ -198,6 +211,7 @@ fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit, navigateCreateSurvey: (
                     val isOpen = (effect as HomeEffect.OnNavigationDrawerChange).isOpen
                     if (isOpen) drawerState.open() else drawerState.close()
                 }
+
                 null -> {}
             }
         }
@@ -206,38 +220,38 @@ fun NavGraphBuilder.homeScreen(navigateAuth: () -> Unit, navigateCreateSurvey: (
             drawerState = drawerState,
             bottomSheetState = bottomSheetState,
             onOpenNavigationDrawer = {
-                viewModel.onEvent(HomeEvent.OnNavigationDrawerChange(isOpen = true))
+                viewModel.onEvent(event = HomeEvent.OnNavigationDrawerChange(isOpen = true))
             },
             onSignOutClicked = {
-                viewModel.onEvent(HomeEvent.OnSignOutDialogChange(isOpen = true))
-                viewModel.onEvent(HomeEvent.OnNavigationDrawerChange(isOpen = false))
+                viewModel.onEvent(event = HomeEvent.OnSignOutDialogChange(isOpen = true))
+                viewModel.onEvent(event = HomeEvent.OnNavigationDrawerChange(isOpen = false))
             },
             addSurveyClicked = {
-                viewModel.onEvent(HomeEvent.OnAddPressed)
+                viewModel.onEvent(event = HomeEvent.OnAddPressed)
             },
             onOpenFilterView = {
-                viewModel.onEvent(HomeEvent.OnFilterChange(isOpen = true))
+                viewModel.onEvent(event = HomeEvent.OnFilterChange(isOpen = true))
             },
             onCloseFilterView = {
-                viewModel.onEvent(HomeEvent.OnFilterChange(isOpen = false))
+                viewModel.onEvent(event = HomeEvent.OnFilterChange(isOpen = false))
             },
             onOpenSearchView = {
-                viewModel.onEvent(HomeEvent.OnSearchChange(isOpen = true))
+                viewModel.onEvent(event = HomeEvent.OnSearchChange(isOpen = true))
             },
             onCloseSearchView = {
-                viewModel.onEvent(HomeEvent.OnSearchChange(isOpen = false))
+                viewModel.onEvent(event = HomeEvent.OnSearchChange(isOpen = false))
             })
 
         CustomAlertDialog(title = stringResource(id = R.string.sign_out),
             message = stringResource(id = R.string.sign_out_message),
             isOpen = state.isSignOutDialogOpen,
             onCloseDialog = {
-                viewModel.onEvent(HomeEvent.OnNavigationDrawerChange(isOpen = true))
-                viewModel.onEvent(HomeEvent.OnSignOutDialogChange(isOpen = false))
+                viewModel.onEvent(event = HomeEvent.OnNavigationDrawerChange(isOpen = true))
+                viewModel.onEvent(event = HomeEvent.OnSignOutDialogChange(isOpen = false))
             },
             onConfirmClicked = {
-                viewModel.onEvent(HomeEvent.OnFirebaseSignOut)
-                viewModel.onEvent(HomeEvent.OnNavigateAuth)
+                viewModel.onEvent(event = HomeEvent.OnFirebaseSignOut)
+                viewModel.onEvent(event = HomeEvent.OnNavigateAuth)
             })
     }
 }
@@ -246,12 +260,26 @@ fun NavGraphBuilder.createSurveyScreen(navigateHome: () -> Unit) {
     composable(route = Screen.CreateSurvey.route) {
         val viewModel = hiltViewModel<CreateSurveyViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
+        val effect by viewModel.effect.collectAsStateWithLifecycle(initialValue = null)
 
-        CreateSurveyScreen(
-            state = state,
-            onAddSurveyClicked = viewModel::createSurvey,
-            onTitleChanged = viewModel::onTitleTextChanged,
-            navigateHome = navigateHome
-        )
+        LaunchedEffect(key1 = effect) {
+            when (effect) {
+                CreateSurveyEffect.OnNavigateHome -> navigateHome()
+                null -> {}
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            viewModel.onEvent(event = CreateSurveyEvent.GetSignedUser)
+        }
+
+        CreateSurveyScreen(state = state,
+            onCreateSurveyClicked = { viewModel.onEvent(event = CreateSurveyEvent.CreateNewSurvey) },
+            onTitleChanged = { title ->
+                viewModel.onEvent(event = CreateSurveyEvent.OnTitleChanged(title))
+            },
+            navigateHome = {
+                viewModel.onEvent(event = CreateSurveyEvent.OnNavigateHome)
+            })
     }
 }

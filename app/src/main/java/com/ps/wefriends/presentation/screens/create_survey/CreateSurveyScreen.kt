@@ -19,7 +19,7 @@ import com.ps.wefriends.R
 @Composable
 fun CreateSurveyScreen(
     state: CreateSurveyState,
-    onAddSurveyClicked: () -> Unit,
+    onCreateSurveyClicked: () -> Unit,
     onTitleChanged: (String) -> Unit,
     navigateHome: () -> Unit
 ) {
@@ -35,7 +35,7 @@ fun CreateSurveyScreen(
         CreateSurveyContent(
             state = state,
             onTitleChanged = onTitleChanged,
-            onAddSurveyClicked = onAddSurveyClicked,
+            onAddSurveyClicked = onCreateSurveyClicked,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
