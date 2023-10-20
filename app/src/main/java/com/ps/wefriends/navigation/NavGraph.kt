@@ -38,6 +38,8 @@ import com.ps.wefriends.presentation.screens.home.HomeEffect
 import com.ps.wefriends.presentation.screens.home.HomeEvent
 import com.ps.wefriends.presentation.screens.home.HomeScreen
 import com.ps.wefriends.presentation.screens.home.HomeViewModel
+import com.ps.wefriends.presentation.screens.onboarding.OnboardingEffect
+import com.ps.wefriends.presentation.screens.onboarding.OnboardingEvent
 import com.ps.wefriends.presentation.screens.onboarding.OnboardingScreen
 import com.ps.wefriends.presentation.screens.onboarding.OnboardingViewModel
 import com.stevdzasan.messagebar.rememberMessageBarState
@@ -50,6 +52,8 @@ fun NavGraph(startDestinationRoute: String, navController: NavHostController) {
         }, navigateOnboarding = { navController.navigate(Screen.Onboarding.route) })
         onboardingScreen(navigateHome = {
             navController.navigate(Screen.Home.route)
+        }, navigateAuth = {
+            navController.navigate(Screen.Authentication.route)
         })
         homeScreen(navigateAuth = {
             navController.navigate(Screen.Authentication.route)
@@ -70,43 +74,43 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
         val state by viewModel.state.collectAsStateWithLifecycle()
         val effect by viewModel.effect.collectAsStateWithLifecycle(initialValue = null)
 
-        val launcher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.StartIntentSenderForResult(),
-            onResult = { result ->
-                if (result.resultCode == ComponentActivity.RESULT_OK) {
-                    authClient.googleSignInWithIntent(intent = result.data
-                        ?: return@rememberLauncherForActivityResult,
-                        onSuccess = {
-                            viewModel.onEvent(
-                                event = AuthenticationEvent.OnAuthenticationChange(
-                                    isAuthenticated = true
+        val launcher =
+            rememberLauncherForActivityResult(contract = ActivityResultContracts.StartIntentSenderForResult(),
+                onResult = { result ->
+                    if (result.resultCode == ComponentActivity.RESULT_OK) {
+                        authClient.googleSignInWithIntent(intent = result.data
+                            ?: return@rememberLauncherForActivityResult,
+                            onSuccess = {
+                                viewModel.onEvent(
+                                    event = AuthenticationEvent.OnAuthenticationChange(
+                                        isAuthenticated = true
+                                    )
                                 )
-                            )
-                            viewModel.onEvent(
-                                event = AuthenticationEvent.OnGoogleLoadingChange(
-                                    isLoading = false
+                                viewModel.onEvent(
+                                    event = AuthenticationEvent.OnGoogleLoadingChange(
+                                        isLoading = false
+                                    )
                                 )
-                            )
-                        },
-                        onError = {
-                            viewModel.onEvent(
-                                event = AuthenticationEvent.OnShowErrorMessage(
-                                    exception = it
+                            },
+                            onError = {
+                                viewModel.onEvent(
+                                    event = AuthenticationEvent.OnShowErrorMessage(
+                                        exception = it
+                                    )
                                 )
-                            )
-                            viewModel.onEvent(
-                                event = AuthenticationEvent.OnAuthenticationChange(
-                                    isAuthenticated = false
+                                viewModel.onEvent(
+                                    event = AuthenticationEvent.OnAuthenticationChange(
+                                        isAuthenticated = false
+                                    )
                                 )
-                            )
-                            viewModel.onEvent(
-                                event = AuthenticationEvent.OnGoogleLoadingChange(
-                                    isLoading = false
+                                viewModel.onEvent(
+                                    event = AuthenticationEvent.OnGoogleLoadingChange(
+                                        isLoading = false
+                                    )
                                 )
-                            )
-                        })
-                }
-            })
+                            })
+                    }
+                })
 
         LaunchedEffect(Unit) {
             viewModel.onEvent(event = AuthenticationEvent.OnCheckWhetherOnboardingIsRequired)
@@ -172,12 +176,22 @@ fun NavGraphBuilder.authenticationScreen(navigateHome: () -> Unit, navigateOnboa
     }
 }
 
-fun NavGraphBuilder.onboardingScreen(navigateHome: () -> Unit) {
+fun NavGraphBuilder.onboardingScreen(navigateHome: () -> Unit, navigateAuth: () -> Unit) {
     composable(route = Screen.Onboarding.route) {
         val viewModel = hiltViewModel<OnboardingViewModel>()
+        val effect by viewModel.effect.collectAsStateWithLifecycle(initialValue = null)
+
+        LaunchedEffect(effect) {
+            when (effect) {
+                OnboardingEffect.OnNavigateAuth -> navigateAuth()
+                OnboardingEffect.OnNavigateHome -> navigateHome()
+                null -> {}
+            }
+        }
+
         OnboardingScreen(setAsCompleted = {
-            viewModel.setOnboardingAsCompleted()
-            navigateHome()
+            viewModel.onEvent(event = OnboardingEvent.OnCompleteOnboarding)
+            viewModel.onEvent(event = OnboardingEvent.OnNavigateHome)
         })
     }
 }
