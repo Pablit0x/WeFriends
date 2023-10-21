@@ -81,6 +81,9 @@ dependencies {
     // WorkManager Hilt
     implementation(libs.androidx.hilt.common)
 
+    // WorkManager
+    implementation(libs.work.manager)
+
     // Lifecycle Aware Flow Collector
     implementation(libs.compose.lifecycle.flow)
 
