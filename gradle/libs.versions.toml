@@ -7,7 +7,7 @@ androidx-test-ext-junit = "1.1.5"
 espresso-core = "3.5.1"
 lifecycle-runtime-ktx = "2.6.2"
 activity-compose = "1.8.0"
-compose-bom = "2023.10.00"
+compose-bom = "2023.10.01"
 ksp = "1.9.0-1.0.13"
 hilt = "2.48"
 hilt-compose = "1.0.0"
@@ -51,6 +51,7 @@ compose-googleFonts = { group = "androidx.compose.ui", name = "ui-text-google-fo
 compose-extendedIcons = { group = "androidx.compose.material", name = "material-icons-extended" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 firebase-firestore = {group = "com.google.firebase", name = "firebase-firestore-ktx"}
+firebase-storage = {group = "com.google.firebase", name = "firebase-storage-ktx"}
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 auth-one-tap = { group = "com.github.stevdza-san", name = "OneTapCompose", version.ref = "auth-one-tap" }

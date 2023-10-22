@@ -108,6 +108,9 @@ dependencies {
     // Firebase Firestore
     implementation(libs.firebase.firestore)
 
+    // Firebase Storage
+    implementation(libs.firebase.storage)
+
     // Timber - Logger
     implementation(libs.timber)
 
