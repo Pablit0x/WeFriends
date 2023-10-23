@@ -25,7 +25,7 @@ kotlinx-serialization = "1.6.0"
 coil-compose = "2.3.0"
 google-auth = "20.7.0"
 hilt-common = "1.0.0"
-work-manager = "2.8.1"
+work-runtime-ktx = "2.8.1"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -63,7 +63,7 @@ serialization = {group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-
 coil = {group = "io.coil-kt", name= "coil-compose", version.ref ="coil-compose"}
 google-auth = {group = "com.google.android.gms", name = "play-services-auth", version.ref = "google-auth"}
 androidx-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hilt-common" }
-work-manager = { group = " androidx.work", name = "work-runtime-ktx", version.ref = "work-manager"}
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

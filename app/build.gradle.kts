@@ -82,7 +82,7 @@ dependencies {
     implementation(libs.androidx.hilt.common)
 
     // WorkManager
-    implementation(libs.work.manager)
+    implementation(libs.androidx.work.runtime.ktx)
 
     // Lifecycle Aware Flow Collector
     implementation(libs.compose.lifecycle.flow)
