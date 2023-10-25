@@ -49,7 +49,7 @@ fun CreateSurveyContent(
         Button(onClick = {
             multiplePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }){
-            Text(text = stringResource(id = R.string.account))
+            Text(text = stringResource(id = R.string.select_cover))
         }
 
 

@@ -8,9 +8,11 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.ps.wefriends.data.repository.SurveysRepositoryImpl
 import com.ps.wefriends.domain.repository.SurveysRepository
 import com.ps.wefriends.presentation.screens.authentication.AuthUiClient
+import com.ps.wefriends.util.Constants
 import com.ps.wefriends.util.Constants.SURVEYS
 import dagger.Module
 import dagger.Provides
@@ -31,6 +33,11 @@ object FirebaseModule {
     @Provides
     @Singleton
     fun provideSurveysRef() = Firebase.firestore.collection(SURVEYS)
+
+
+    @Provides
+    @Singleton
+    fun provideStorageRef() = Firebase.storage.reference.child(Constants.STORAGE_PATH)
 
 
     @Provides

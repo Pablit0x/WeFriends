@@ -11,6 +11,7 @@
     <string name="get_started">GET STARTED</string>
     <string name="sign_out">Sign out</string>
     <string name="account">Account</string>
+    <string name="select_cover">Select Cover</string>
     <string name="friends">Friends</string>
     <string name="invites">Invites</string>
     <string name="first_onboarding_screen_description">Welcome to We Friends!\nDiscover and create surveys with your friends.</string>

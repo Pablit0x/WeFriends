@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.ps.wefriends.R
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,7 +39,10 @@ fun CreateSurveyScreen(
             onAddSurveyClicked = onCreateSurveyClicked,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+                .padding(padding),
+            onImageSelected = {
+                Timber.tag("lolipop").d("uri = $it")
+            }
         )
     }
 }
