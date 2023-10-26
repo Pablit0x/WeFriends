@@ -17,6 +17,4 @@ class WeFriends : Application(), Configuration.Provider {
             .setMinimumLoggingLevel(Log.DEBUG)
             .setWorkerFactory(uploadWorkerFactory)
             .build()
-
-
 }
