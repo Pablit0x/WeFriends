@@ -14,10 +14,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.work.WorkManager
 import com.ps.wefriends.R
 
 @Composable
@@ -28,10 +26,6 @@ fun CreateSurveyContent(
     modifier: Modifier = Modifier,
     onImageSelected: (Uri) -> Unit
 ) {
-    val context = LocalContext.current
-    val work = WorkManager.getInstance(context)
-
-
     val multiplePhotoPicker =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.PickMultipleVisualMedia(
             maxItems = 8
