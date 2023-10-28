@@ -7,7 +7,7 @@ sealed class CreateSurveyEvent{
     data object GetSignedUser: CreateSurveyEvent()
     data class OnTitleChanged(val text : String) : CreateSurveyEvent()
     data class OnImageChanged(val imageUri: Uri?) : CreateSurveyEvent()
-    data object OnUploadImageToFirebaseStorage : CreateSurveyEvent()
+    data class OnUploadImageToFirebaseStorage(val imageUri: Uri) : CreateSurveyEvent()
     data object OnNavigateHome : CreateSurveyEvent()
 }
 

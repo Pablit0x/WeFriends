@@ -1,9 +1,15 @@
 package com.ps.wefriends.presentation.screens.create_survey
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.ps.wefriends.data.workers.UploadWorker
 import com.ps.wefriends.domain.repository.SurveysRepository
 import com.ps.wefriends.presentation.screens.authentication.AuthUiClient
+import com.ps.wefriends.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,7 +22,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateSurveyViewModel @Inject constructor(
-    private val authUiClient: AuthUiClient, private val repository: SurveysRepository
+    private val authUiClient: AuthUiClient,
+    private val repository: SurveysRepository,
+    private val workManager: WorkManager
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CreateSurveyState())
@@ -33,7 +41,7 @@ class CreateSurveyViewModel @Inject constructor(
             CreateSurveyEvent.GetSignedUser -> getSignedUser()
             is CreateSurveyEvent.OnImageChanged -> TODO()
             is CreateSurveyEvent.OnTitleChanged -> onTitleTextChanged(event.text)
-            CreateSurveyEvent.OnUploadImageToFirebaseStorage -> TODO()
+            is CreateSurveyEvent.OnUploadImageToFirebaseStorage -> uploadImageToFirebase(event.imageUri)
             CreateSurveyEvent.OnNavigateHome -> onNavigateHome()
         }
     }
@@ -52,7 +60,7 @@ class CreateSurveyViewModel @Inject constructor(
         }
     }
 
-    fun onTitleTextChanged(text: String) {
+    private fun onTitleTextChanged(text: String) {
         _state.update {
             it.copy(
                 title = text
@@ -72,5 +80,15 @@ class CreateSurveyViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun uploadImageToFirebase(uri : Uri){
+        val request = OneTimeWorkRequestBuilder<UploadWorker>().setInputData(uriInputDataBuilder(uri)).build()
+        workManager.enqueue(request)
+    }
+
+
+    private fun uriInputDataBuilder(uri: Uri): Data {
+        return Data.Builder().putString(Constants.KEY_IMAGE_URI, uri.toString()).build()
     }
 }

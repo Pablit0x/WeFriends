@@ -13,15 +13,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.ps.wefriends.R
-import com.ps.wefriends.data.workers.UploadWorker
-import com.ps.wefriends.util.Constants.KEY_IMAGE_URI
-import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,12 +22,9 @@ fun CreateSurveyScreen(
     state: CreateSurveyState,
     onCreateSurveyClicked: () -> Unit,
     onTitleChanged: (String) -> Unit,
-    navigateHome: () -> Unit
+    navigateHome: () -> Unit,
+    onImageSelected: (Uri) -> Unit
 ) {
-
-    val context = LocalContext.current
-    val workManager = WorkManager.getInstance(context)
-
     Scaffold(topBar = {
         CenterAlignedTopAppBar(title = {
             Text(text = stringResource(id = R.string.create_survet_screen_title))
@@ -52,16 +42,8 @@ fun CreateSurveyScreen(
                 .fillMaxSize()
                 .padding(padding),
             onImageSelected = {
-
-                val request =
-                    OneTimeWorkRequestBuilder<UploadWorker>().setInputData(uriInputDataBuilder(it)).build()
-                workManager.enqueue(request)
-                Timber.tag("lolipop").d("uri = $it")
+                onImageSelected(it)
             }
         )
     }
-}
-
-private fun uriInputDataBuilder(uri: Uri): Data {
-    return Data.Builder().putString(KEY_IMAGE_URI, uri.toString()).build()
 }

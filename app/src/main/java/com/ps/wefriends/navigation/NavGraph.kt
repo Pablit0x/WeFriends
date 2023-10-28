@@ -294,6 +294,9 @@ fun NavGraphBuilder.createSurveyScreen(navigateHome: () -> Unit) {
             },
             navigateHome = {
                 viewModel.onEvent(event = CreateSurveyEvent.OnNavigateHome)
+            },
+            onImageSelected = {
+                viewModel.onEvent(event = CreateSurveyEvent.OnUploadImageToFirebaseStorage(imageUri = it))
             })
     }
 }
