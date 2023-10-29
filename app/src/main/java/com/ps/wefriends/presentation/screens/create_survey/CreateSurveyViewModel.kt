@@ -68,7 +68,7 @@ class CreateSurveyViewModel @Inject constructor(
         }
     }
 
-    fun createSurvey() {
+    private fun createSurvey() {
         state.value.run {
             viewModelScope.launch(Dispatchers.IO) {
                 repository.createSurvey(
@@ -82,7 +82,7 @@ class CreateSurveyViewModel @Inject constructor(
         }
     }
 
-    fun uploadImageToFirebase(uri : Uri){
+    private fun uploadImageToFirebase(uri : Uri){
         val request = OneTimeWorkRequestBuilder<UploadWorker>().setInputData(uriInputDataBuilder(uri)).build()
         workManager.enqueue(request)
     }
